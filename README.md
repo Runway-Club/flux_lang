@@ -20,7 +20,7 @@ To get started with Flux, you will need to install the Flux compiler and runtime
 Building Flux from source is easy. Just follow these steps:
 1. Clone the Flux repository from GitHub:
 ```bash
-git clone
+git clone https://github.com/Runway-Club/flux_lang.git
 ```
 2. Change to the Flux directory:
 ```bash
@@ -28,7 +28,7 @@ cd flux_lang
 ```
 3. Build the Flux compiler and runtime:
 ```bash
-make build-vm
+make build
 ```
 Flux binaries will be built in the `bin` directory.
 
