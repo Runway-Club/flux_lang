@@ -97,6 +97,9 @@ type FluxListener interface {
 	// EnterGet_var is called when entering the get_var production.
 	EnterGet_var(c *Get_varContext)
 
+	// EnterArgs is called when entering the args production.
+	EnterArgs(c *ArgsContext)
+
 	// EnterFunction_call is called when entering the function_call production.
 	EnterFunction_call(c *Function_callContext)
 
@@ -189,6 +192,9 @@ type FluxListener interface {
 
 	// ExitGet_var is called when exiting the get_var production.
 	ExitGet_var(c *Get_varContext)
+
+	// ExitArgs is called when exiting the args production.
+	ExitArgs(c *ArgsContext)
 
 	// ExitFunction_call is called when exiting the function_call production.
 	ExitFunction_call(c *Function_callContext)

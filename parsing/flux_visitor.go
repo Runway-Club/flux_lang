@@ -97,6 +97,9 @@ type FluxVisitor interface {
 	// Visit a parse tree produced by Flux#get_var.
 	VisitGet_var(ctx *Get_varContext) interface{}
 
+	// Visit a parse tree produced by Flux#args.
+	VisitArgs(ctx *ArgsContext) interface{}
+
 	// Visit a parse tree produced by Flux#function_call.
 	VisitFunction_call(ctx *Function_callContext) interface{}
 }

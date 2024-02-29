@@ -10,6 +10,14 @@ type FluxTraverser struct {
 	logger io.Logger
 }
 
+func (f FluxTraverser) EnterArgs(c *parsing.ArgsContext) {
+	f.logger.Infof("Entering args")
+}
+
+func (f FluxTraverser) ExitArgs(c *parsing.ArgsContext) {
+	f.logger.Infof("Exiting args")
+}
+
 func NewFluxTraverser(logger io.Logger) *FluxTraverser {
 	return &FluxTraverser{
 		logger: logger,

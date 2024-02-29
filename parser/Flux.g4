@@ -39,4 +39,5 @@ data_type
     | COMMON_IDENTIFIER
     ;
 
+
 func_declaration: AT FUNC VAR_IDENTIFIER L_PAREN (VAR_IDENTIFIER (COMMA VAR_IDENTIFIER)*)? R_PAREN (RETURN_TYPE data_type)?  block;

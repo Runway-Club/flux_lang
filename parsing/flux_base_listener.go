@@ -200,6 +200,12 @@ func (s *BaseFluxListener) EnterGet_var(ctx *Get_varContext) {}
 // ExitGet_var is called when production get_var is exited.
 func (s *BaseFluxListener) ExitGet_var(ctx *Get_varContext) {}
 
+// EnterArgs is called when production args is entered.
+func (s *BaseFluxListener) EnterArgs(ctx *ArgsContext) {}
+
+// ExitArgs is called when production args is exited.
+func (s *BaseFluxListener) ExitArgs(ctx *ArgsContext) {}
+
 // EnterFunction_call is called when production function_call is entered.
 func (s *BaseFluxListener) EnterFunction_call(ctx *Function_callContext) {}
 

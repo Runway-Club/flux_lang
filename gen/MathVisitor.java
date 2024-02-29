@@ -82,6 +82,12 @@ public interface MathVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGet_var(Math.Get_varContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Math#args}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArgs(Math.ArgsContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Math#function_call}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

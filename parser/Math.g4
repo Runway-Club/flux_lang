@@ -62,6 +62,8 @@ get_var
     |  get_child
     ;
 
+args: math_expression (COMMA math_expression)*;
+
 function_call
-    :   VAR_IDENTIFIER L_PAREN (math_expression (COMMA math_expression)*)? R_PAREN
+    :   VAR_IDENTIFIER L_PAREN args? R_PAREN
     ;

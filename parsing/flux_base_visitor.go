@@ -127,6 +127,10 @@ func (v *BaseFluxVisitor) VisitGet_var(ctx *Get_varContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseFluxVisitor) VisitArgs(ctx *ArgsContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseFluxVisitor) VisitFunction_call(ctx *Function_callContext) interface{} {
 	return v.VisitChildren(ctx)
 }

@@ -127,6 +127,16 @@ public interface MathListener extends ParseTreeListener {
 	 */
 	void exitGet_var(Math.Get_varContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Math#args}.
+	 * @param ctx the parse tree
+	 */
+	void enterArgs(Math.ArgsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Math#args}.
+	 * @param ctx the parse tree
+	 */
+	void exitArgs(Math.ArgsContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Math#function_call}.
 	 * @param ctx the parse tree
 	 */
