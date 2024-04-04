@@ -3,11 +3,14 @@ package vm
 import (
 	"github.com/Runway-Club/flux_lang/parsing"
 	"github.com/Runway-Club/flux_lang/vm/io"
+	"github.com/Runway-Club/flux_lang/vm/statements"
 	"github.com/antlr4-go/antlr/v4"
+	"strconv"
 )
 
 type FluxTraverser struct {
-	logger io.Logger
+	logger   io.Logger
+	varTable *statements.VarTable
 }
 
 func (f FluxTraverser) EnterArgs(c *parsing.ArgsContext) {
@@ -18,9 +21,10 @@ func (f FluxTraverser) ExitArgs(c *parsing.ArgsContext) {
 	f.logger.Infof("Exiting args")
 }
 
-func NewFluxTraverser(logger io.Logger) *FluxTraverser {
+func NewFluxTraverser(logger io.Logger, varTable *statements.VarTable) *FluxTraverser {
 	return &FluxTraverser{
-		logger: logger,
+		logger:   logger,
+		varTable: varTable,
 	}
 }
 
@@ -88,15 +92,15 @@ func (f FluxTraverser) EnterVar_value(c *parsing.Var_valueContext) {
 	f.logger.Infof("Entering var value")
 }
 
-func (f FluxTraverser) EnterString_var_declaration(c *parsing.String_var_declarationContext) {
+func (f *FluxTraverser) EnterString_var_declaration(c *parsing.String_var_declarationContext) {
 	f.logger.Infof("Entering string var declaration")
 }
 
-func (f FluxTraverser) EnterNumber_var_declaration(c *parsing.Number_var_declarationContext) {
+func (f *FluxTraverser) EnterNumber_var_declaration(c *parsing.Number_var_declarationContext) {
 	f.logger.Infof("Entering number var declaration")
 }
 
-func (f FluxTraverser) EnterBoolean_var_declaration(c *parsing.Boolean_var_declarationContext) {
+func (f *FluxTraverser) EnterBoolean_var_declaration(c *parsing.Boolean_var_declarationContext) {
 	f.logger.Infof("Entering boolean var declaration")
 }
 
@@ -218,6 +222,22 @@ func (f FluxTraverser) ExitString_var_declaration(c *parsing.String_var_declarat
 
 func (f FluxTraverser) ExitNumber_var_declaration(c *parsing.Number_var_declarationContext) {
 	f.logger.Infof("Exiting number var declaration")
+	// get number value if it exists
+	if c.NUMBER() == nil {
+		if c.Math_expression() != nil {
+			if c.Math_expression().Logical_expression() != nil {
+				f.logger.Errorf("invalid variable value %v for %v as a num", c.Math_expression().GetText(), c.Var_name().GetText())
+				return
+			}
+		}
+		f.varTable.SetNum(c.Var_name().GetText(), 0)
+	} else {
+		numValue, err := strconv.ParseInt(c.NUMBER().GetText(), 10, 64)
+		if err != nil {
+			f.logger.Errorf("invalid variable value %v for %v as a num", c.NUMBER().GetText(), c.Var_name().GetText())
+		}
+		f.varTable.SetNum(c.Var_name().GetText(), int(numValue))
+	}
 }
 
 func (f FluxTraverser) ExitBoolean_var_declaration(c *parsing.Boolean_var_declarationContext) {

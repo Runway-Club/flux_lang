@@ -1,18 +1,24 @@
 package common
 
 type Var[T any] struct {
-	Name  string
-	Value T
+	name  string
+	value T
+}
+
+type Identifiable[T any] interface {
+	GetName() string
+	GetValue() T
+	SetValue(value T)
 }
 
 func (v *Var[T]) GetName() string {
-	return v.Name
+	return v.name
 }
 
 func (v *Var[T]) GetValue() T {
-	return v.Value
+	return v.value
 }
 
 func (v *Var[T]) SetValue(value T) {
-	v.Value = value
+	v.value = value
 }

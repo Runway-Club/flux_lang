@@ -4,6 +4,7 @@ import (
 	"github.com/Runway-Club/flux_lang/parsing"
 	"github.com/Runway-Club/flux_lang/shared"
 	"github.com/Runway-Club/flux_lang/vm/io"
+	"github.com/Runway-Club/flux_lang/vm/statements"
 	"github.com/antlr4-go/antlr/v4"
 	"os"
 	"time"
@@ -11,6 +12,7 @@ import (
 
 type FluxVirtualMachine struct {
 	traverser parsing.FluxListener
+	varTable  *statements.VarTable
 }
 
 func NewFluxVirtualMachine() *FluxVirtualMachine {
@@ -51,7 +53,10 @@ func (f *FluxVirtualMachine) Execute(params *shared.ExecutionParams) shared.Exec
 	if params.Verbose {
 		logger = io.NewBaseLogger()
 	}
-	f.traverser = NewFluxTraverser(logger)
+
+	varTable := statements.NewVarTable()
+	f.varTable = varTable
+	f.traverser = NewFluxTraverser(logger, varTable)
 	// add traverser to parser
 	parser.AddParseListener(f.traverser)
 	// start parsing
@@ -62,4 +67,8 @@ func (f *FluxVirtualMachine) Execute(params *shared.ExecutionParams) shared.Exec
 		Error:       "",
 		ElapsedTime: elapsedTime,
 	}
+}
+
+func (f *FluxVirtualMachine) GetVarTable() *statements.VarTable {
+	return f.varTable
 }
