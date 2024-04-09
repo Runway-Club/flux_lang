@@ -9,15 +9,18 @@ import (
 	"github.com/Runway-Club/flux_lang/vm/statements/declarations"
 	"github.com/Runway-Club/flux_lang/vm/statements/expression"
 	"github.com/Runway-Club/flux_lang/vm/statements/expression/operators"
+	"github.com/Runway-Club/flux_lang/vm/utils"
 	"github.com/antlr4-go/antlr/v4"
+	"strconv"
 )
 
 type FluxProgramParser struct {
-	logger           io.Logger
-	errorCollector   io.ErrorCollector
-	program          *statements.Program
-	currentStatement statements.Statement
-	executionCtx     *statements.ExecutionContext
+	logger          io.Logger
+	errorCollector  io.ErrorCollector
+	program         *statements.Program
+	stackStatements *utils.Stack[statements.Statement]
+	resultStack     *utils.Stack[interface{}]
+	executionCtx    *statements.ExecutionContext
 }
 
 func (f FluxProgramParser) EnterArgs(c *parsing.ArgsContext) {
@@ -29,13 +32,11 @@ func (f FluxProgramParser) ExitArgs(c *parsing.ArgsContext) {
 }
 
 func NewFluxProgramParser(logger io.Logger, errorCollector io.ErrorCollector, varOperator core.VarOperator) *FluxProgramParser {
-	program := &statements.Program{}
-	currentStatement := program
 	return &FluxProgramParser{
-		logger:           logger,
-		errorCollector:   errorCollector,
-		program:          program,
-		currentStatement: currentStatement,
+		logger:          logger,
+		errorCollector:  errorCollector,
+		stackStatements: utils.NewStack[statements.Statement](),
+		resultStack:     utils.NewStack[interface{}](),
 	}
 }
 
@@ -61,10 +62,13 @@ func (f FluxProgramParser) ExitEveryRule(ctx antlr.ParserRuleContext) {
 
 func (f FluxProgramParser) EnterProgram(c *parsing.ProgramContext) {
 	f.logger.Infof("Entering program")
+	prog := statements.NewProgram()
+	f.stackStatements.Push(prog)
 }
 
 func (f FluxProgramParser) EnterStatement(c *parsing.StatementContext) {
 	f.logger.Infof("Entering statement")
+
 }
 
 func (f FluxProgramParser) EnterExpression(c *parsing.ExpressionContext) {
@@ -113,6 +117,8 @@ func (f *FluxProgramParser) EnterString_var_declaration(c *parsing.String_var_de
 
 func (f *FluxProgramParser) EnterNumber_var_declaration(c *parsing.Number_var_declarationContext) {
 	f.logger.Infof("Entering number var declaration")
+	numDecStmt := declarations.NewVarDeclaration(c.GetStart().GetLine(), c.GetStart().GetStart(), 0, "", declarations.FluxTypeNumber, "", nil)
+	f.stackStatements.Push(numDecStmt)
 }
 
 func (f *FluxProgramParser) EnterBoolean_var_declaration(c *parsing.Boolean_var_declarationContext) {
@@ -153,44 +159,20 @@ func (f FluxProgramParser) EnterOp_level5(c *parsing.Op_level5Context) {
 
 func (f FluxProgramParser) EnterNumeric_expression(c *parsing.Numeric_expressionContext) {
 	f.logger.Infof("Entering numeric expression")
-	// check if current statement is a math expression
-	if mathExpr, ok := f.currentStatement.(*expression.MathExpression); ok {
-		if len(c.AllNumeric_expression()) == 2 {
-			numericExpr := &expression.NumericExpression{
-				BaseStatement: &statements.BaseStatement{
-					Line:     c.GetStart().GetLine(),
-					StartPos: c.GetStart().GetStart(),
-					EndPos:   c.GetStop().GetStop(),
-				},
-				LeftExpr:  nil,
-				RightExpr: nil,
-				Op:        operators.NullOp,
-			}
-			mathExpr.NumericExpr = numericExpr
-			f.currentStatement = numericExpr
-		}
+
+	numExpr := &expression.NumericExpression{
+		BaseStatement: &statements.BaseStatement{
+			Line:     c.GetStart().GetLine(),
+			StartPos: c.GetStart().GetStart(),
+		},
+		LeftExpr:  nil,
+		Op:        nil,
+		RightExpr: nil,
+		Value:     0,
 	}
 
-	// check if current statement is a numeric expression
-	if numericExpr, ok := f.currentStatement.(*expression.NumericExpression); ok {
-		if len(c.AllNumeric_expression()) == 2 {
-			leftExpr := &expression.NumericExpression{
-				BaseStatement: &statements.BaseStatement{
-					Line:     c.GetStart().GetLine(),
-					StartPos: c.GetStart().GetStart(),
-					EndPos:   c.GetStop().GetStop(),
-				},
-				LeftExpr:  nil,
-				RightExpr: nil,
-				Op:        operators.NullOp,
-			}
-			numericExpr.LeftExpr = leftExpr
-			f.currentStatement = leftExpr
-		} else if c.NUMBER() != nil {
-			
-		}
+	f.stackStatements.Push(numExpr)
 
-	}
 }
 
 func (f FluxProgramParser) EnterLogical_expression(c *parsing.Logical_expressionContext) {
@@ -203,6 +185,15 @@ func (f FluxProgramParser) EnterComparative_expression(c *parsing.Comparative_ex
 
 func (f FluxProgramParser) EnterMath_expression(c *parsing.Math_expressionContext) {
 	f.logger.Infof("Entering math expression")
+	mathExpr := &expression.MathExpression{
+		BaseStatement: &statements.BaseStatement{
+			Line:     c.GetStart().GetLine(),
+			StartPos: c.GetStart().GetStart(),
+			EndPos:   0,
+		},
+		NumericExpr: nil,
+	}
+	f.stackStatements.Push(mathExpr)
 }
 
 func (f FluxProgramParser) EnterGet_array_element(c *parsing.Get_array_elementContext) {
@@ -221,8 +212,16 @@ func (f FluxProgramParser) EnterFunction_call(c *parsing.Function_callContext) {
 	f.logger.Infof("Entering function call")
 }
 
-func (f FluxProgramParser) ExitProgram(c *parsing.ProgramContext) {
+func (f *FluxProgramParser) ExitProgram(c *parsing.ProgramContext) {
 	f.logger.Infof("Exiting program")
+	if f.stackStatements.Peek() != nil {
+		prog := (*f.stackStatements.Pop()).(*statements.Program)
+		f.program = prog
+	}
+	for !f.resultStack.IsEmpty() {
+		statement := (*f.resultStack.Pop()).(statements.Statement)
+		f.program.Statements = append(f.program.Statements, statement)
+	}
 }
 
 func (f FluxProgramParser) ExitStatement(c *parsing.StatementContext) {
@@ -275,37 +274,24 @@ func (f FluxProgramParser) ExitString_var_declaration(c *parsing.String_var_decl
 
 func (f FluxProgramParser) ExitNumber_var_declaration(c *parsing.Number_var_declarationContext) {
 	f.logger.Infof("Exiting number var declaration")
-	// get number value if it exists
-	if c.NUMBER() == nil {
-		if c.Math_expression() != nil {
-			if c.Math_expression().Logical_expression() != nil {
-				f.errorCollector.CollectError(&exception.BaseException{
-					MessageFmt: "invalid variable value %v for %v as a num",
-					Args:       []interface{}{c.Math_expression().GetText(), c.Var_name().GetText()},
-					Err:        nil,
-					Line:       c.GetStart().GetLine(),
-					StartPos:   c.GetStart().GetStart(),
-					EndPos:     c.GetStop().GetStop(),
-				})
-			} else if c.Math_expression().Numeric_expression() != nil {
-				mathExpr := &expression.MathExpression{
-					BaseStatement: &statements.BaseStatement{
-						Line:     c.GetStart().GetLine(),
-						StartPos: c.GetStart().GetStart(),
-						EndPos:   c.GetStop().GetStop(),
-					},
-					NumericExpr: nil,
+	if f.stackStatements.Peek() != nil {
+		if (*f.stackStatements.Peek()).(*declarations.VarDeclaration) != nil {
+			numDecStmt := (*f.stackStatements.Pop()).(*declarations.VarDeclaration)
+			if !f.resultStack.IsEmpty() {
+				// check if the top of the stack is a MathExpression
+				if _, ok := (*f.resultStack.Peek()).(*expression.MathExpression); ok != false {
+					numDecStmt.Expr = (*f.resultStack.Pop()).(*expression.MathExpression)
 				}
-				f.currentStatement = mathExpr
-				varDecStmt := declarations.NewVarDeclaration(c.GetStart().GetLine(), c.GetStart().GetStart(), c.GetStop().GetStop(), c.Var_name().GetText(), declarations.FluxTypeNumber, "", mathExpr)
-				f.program.Statements = append(f.program.Statements, varDecStmt)
 			}
+
+			if c.NUMBER() != nil {
+				numDecStmt.RawValue = c.NUMBER().GetText()
+			}
+			numDecStmt.EndPos = c.GetStop().GetStop()
+			numDecStmt.Name = c.Var_name().GetText()
+			numDecStmt.Type = declarations.FluxTypeNumber
+			f.resultStack.Push(numDecStmt)
 		}
-		varDecStmt := declarations.NewVarDeclaration(c.GetStart().GetLine(), c.GetStart().GetStart(), c.GetStop().GetStop(), c.Var_name().GetText(), declarations.FluxTypeNumber, "", nil)
-		f.program.Statements = append(f.program.Statements, varDecStmt)
-	} else {
-		varDecStmt := declarations.NewVarDeclaration(c.GetStart().GetLine(), c.GetStart().GetStart(), c.GetStop().GetStop(), c.Var_name().GetText(), declarations.FluxTypeNumber, c.NUMBER().GetText(), nil)
-		f.program.Statements = append(f.program.Statements, varDecStmt)
 	}
 
 }
@@ -348,7 +334,30 @@ func (f FluxProgramParser) ExitOp_level5(c *parsing.Op_level5Context) {
 
 func (f FluxProgramParser) ExitNumeric_expression(c *parsing.Numeric_expressionContext) {
 	f.logger.Infof("Exiting numeric expression")
+	if f.stackStatements.Peek() != nil {
+		numExpr := (*f.stackStatements.Pop()).(*expression.NumericExpression)
+		if c.NUMBER() != nil {
+			value, err := strconv.ParseFloat(c.NUMBER().GetText(), 64)
+			if err != nil {
+				f.errorCollector.CollectError(&exception.BaseException{
+					MessageFmt: "Error parsing number: %v",
+					Args:       []interface{}{c.NUMBER().GetText()},
+				})
+			} else {
+				numExpr.Value = value
+			}
+		} else if len(c.AllNumeric_expression()) == 2 {
+			numExpr.RightExpr = (*f.resultStack.Pop()).(*expression.NumericExpression)
+			numExpr.LeftExpr = (*f.resultStack.Pop()).(*expression.NumericExpression)
 
+			if c.Op_level2() != nil {
+				if c.Op_level2().GetText() == "+" {
+					numExpr.Op = operators.NewAdd(c.GetStart().GetLine(), c.GetStart().GetStart(), c.GetStop().GetStop(), numExpr.LeftExpr, numExpr.RightExpr)
+				}
+			}
+		}
+		f.resultStack.Push(numExpr)
+	}
 }
 
 func (f FluxProgramParser) ExitLogical_expression(c *parsing.Logical_expressionContext) {
@@ -361,6 +370,16 @@ func (f FluxProgramParser) ExitComparative_expression(c *parsing.Comparative_exp
 
 func (f FluxProgramParser) ExitMath_expression(c *parsing.Math_expressionContext) {
 	f.logger.Infof("Exiting math expression")
+	if f.stackStatements.Peek() != nil {
+		if c.Numeric_expression() != nil {
+			if (*f.resultStack.Peek()).(*expression.NumericExpression) != nil {
+				mathExpr := (*f.stackStatements.Pop()).(*expression.MathExpression)
+				mathExpr.NumericExpr = (*f.resultStack.Pop()).(*expression.NumericExpression)
+				f.resultStack.Push(mathExpr)
+			}
+		}
+
+	}
 }
 
 func (f FluxProgramParser) ExitGet_array_element(c *parsing.Get_array_elementContext) {

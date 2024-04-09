@@ -25,9 +25,9 @@ func TestVM_VarDeclaration(t *testing.T) {
 		myVM := vm.NewFluxVirtualMachine()
 		result := myVM.Execute(&shared.ExecutionParams{
 			SourceCode: `
-					num a {2}
-					num b {3}
-					num c {2 + 3}
+				num a {2}
+				num b {3}
+				num c {2 + 3}
 			`,
 		})
 		if len(result.ErrorCollector.GetErrors()) != 0 {

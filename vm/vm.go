@@ -73,16 +73,16 @@ func (f *FluxVirtualMachine) Execute(params *shared.ExecutionParams) shared.Exec
 	// start parsing
 	parser.Program()
 
-	// execute program
+	executionCtx := statements.NewExecutionContext(context.TODO(), varTable)
 
-	exception := f.parser.GetProgram().Execute(statements.NewExecutionContext(context.TODO(), varTable))
+	except := f.parser.GetProgram().Execute(executionCtx)
 	// return result
 	elapsedTime = time.Now().UnixMilli() - elapsedTime
 
 	return shared.ExecutionResult{
 		ErrorCollector:   errorCollector,
 		ElapsedTime:      elapsedTime,
-		RuntimeException: exception,
+		RuntimeException: except,
 	}
 }
 
