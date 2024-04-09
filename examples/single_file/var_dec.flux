@@ -1,3 +1,2 @@
-
 num a {true}
-num b {}
+num b {true}

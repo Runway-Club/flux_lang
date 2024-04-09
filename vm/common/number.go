@@ -1,12 +1,12 @@
 package common
 
 type Number struct {
-	*Var[int]
+	*Var[float64]
 }
 
-func NewNumber(name string, value int) *Number {
+func NewNumber(name string, value float64) *Number {
 	return &Number{
-		Var: &Var[int]{
+		Var: &Var[float64]{
 			name:  name,
 			value: value,
 		},

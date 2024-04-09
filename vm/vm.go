@@ -1,8 +1,10 @@
 package vm
 
 import (
+	"context"
 	"github.com/Runway-Club/flux_lang/parsing"
 	"github.com/Runway-Club/flux_lang/shared"
+	"github.com/Runway-Club/flux_lang/vm/core"
 	"github.com/Runway-Club/flux_lang/vm/io"
 	"github.com/Runway-Club/flux_lang/vm/statements"
 	"github.com/antlr4-go/antlr/v4"
@@ -11,8 +13,8 @@ import (
 )
 
 type FluxVirtualMachine struct {
-	traverser parsing.FluxListener
-	varTable  *statements.VarTable
+	parser   *FluxProgramParser
+	varTable *core.VarTable
 }
 
 func NewFluxVirtualMachine() *FluxVirtualMachine {
@@ -20,6 +22,9 @@ func NewFluxVirtualMachine() *FluxVirtualMachine {
 }
 
 func (f *FluxVirtualMachine) Execute(params *shared.ExecutionParams) shared.ExecutionResult {
+	// create error collector
+	errorCollector := io.NewBaseErrorCollector()
+
 	elapsedTime := time.Now().UnixMilli()
 	// read file at params.EntryPoint
 	// get absolute path of entry point from relative path
@@ -27,20 +32,26 @@ func (f *FluxVirtualMachine) Execute(params *shared.ExecutionParams) shared.Exec
 	if err != nil {
 		elapsedTime = time.Now().UnixMilli() - elapsedTime
 		return shared.ExecutionResult{
-			Error:       err.Error(),
-			ElapsedTime: elapsedTime,
+			ErrorCollector: errorCollector,
+			ElapsedTime:    elapsedTime,
 		}
 	}
-	params.EntryPoint = absPath + "/" + params.EntryPoint
-	// read file
+	mainFileData := ""
+	if params.EntryPoint != "" {
+		params.EntryPoint = absPath + "/" + params.EntryPoint
+		// read file
 
-	mainFileData, err := os.ReadFile(params.EntryPoint)
-	if err != nil {
-		elapsedTime = time.Now().UnixMilli() - elapsedTime
-		return shared.ExecutionResult{
-			Error:       err.Error(),
-			ElapsedTime: elapsedTime,
+		mainFileBytes, err := os.ReadFile(params.EntryPoint)
+		if err != nil {
+			elapsedTime = time.Now().UnixMilli() - elapsedTime
+			return shared.ExecutionResult{
+				ErrorCollector: errorCollector,
+				ElapsedTime:    elapsedTime,
+			}
 		}
+		mainFileData = string(mainFileBytes)
+	} else {
+		mainFileData = params.SourceCode
 	}
 	input := antlr.NewInputStream(string(mainFileData))
 	// create lexer
@@ -54,21 +65,27 @@ func (f *FluxVirtualMachine) Execute(params *shared.ExecutionParams) shared.Exec
 		logger = io.NewBaseLogger()
 	}
 
-	varTable := statements.NewVarTable()
+	varTable := core.NewVarTable()
 	f.varTable = varTable
-	f.traverser = NewFluxTraverser(logger, varTable)
+	f.parser = NewFluxProgramParser(logger, errorCollector, varTable)
 	// add traverser to parser
-	parser.AddParseListener(f.traverser)
+	parser.AddParseListener(f.parser)
 	// start parsing
 	parser.Program()
+
+	// execute program
+
+	exception := f.parser.GetProgram().Execute(statements.NewExecutionContext(context.TODO(), varTable))
 	// return result
 	elapsedTime = time.Now().UnixMilli() - elapsedTime
+
 	return shared.ExecutionResult{
-		Error:       "",
-		ElapsedTime: elapsedTime,
+		ErrorCollector:   errorCollector,
+		ElapsedTime:      elapsedTime,
+		RuntimeException: exception,
 	}
 }
 
-func (f *FluxVirtualMachine) GetVarTable() *statements.VarTable {
+func (f *FluxVirtualMachine) GetVarTable() *core.VarTable {
 	return f.varTable
 }

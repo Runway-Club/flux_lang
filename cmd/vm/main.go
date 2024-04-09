@@ -31,10 +31,30 @@ func main() {
 					// execute the virtual machine
 					result := virtualMachine.Execute(&shared.ExecutionParams{EntryPoint: entryPoint, Verbose: verbose})
 					fmt.Printf("Execution completed in %dms\n", result.ElapsedTime)
-					if result.Error != "" {
-						fmt.Printf("\u001B[31m 8=D Error: %s \u001B[0m \n", result.Error)
+					// check if there are any errors
+					if len(result.ErrorCollector.GetErrors()) != 0 {
+						fmt.Println("\u001B[31m 8=D Compile with errors! \u001B[0m")
+						for _, err := range result.ErrorCollector.GetErrors() {
+							// print line number: position and error message
+							fmt.Printf("\u001B[31m %d: %d->%d\u001B[0m", err.Line, err.StartPos, err.EndPos)
+							fmt.Printf("\u001B[31m "+err.MessageFmt+"\u001B[0m\n", err.Args...)
+						}
+						return nil
+					} else if len(result.ErrorCollector.GetWarnings()) != 0 {
+						fmt.Println("\u001B[33m 8=D Compile with warnings! \u001B[0m")
+						for _, warn := range result.ErrorCollector.GetWarnings() {
+							// print line number: position and error message
+							fmt.Printf("\u001B[33m %d: %d->%d\u001B[0m", warn.Line, warn.StartPos, warn.EndPos)
+							fmt.Printf("\u001B[33m "+warn.MessageFmt+"\u001B[0m\n", warn.Args...)
+						}
 					} else {
-						fmt.Println("\u001B[34m 8=D Execution with no errors! \u001B[0m")
+						fmt.Println("\u001B[34m 8=D Compile with no errors! \u001B[0m")
+					}
+					if result.RuntimeException != nil {
+						fmt.Println("\u001B[31m 8=D Runtime Exception! \u001B[0m")
+						fmt.Printf("\u001B[31m "+result.RuntimeException.MessageFmt+"\u001B[0m\n", result.RuntimeException.Args...)
+					} else {
+						fmt.Println("\u001B[34m 8=D Execution completed successfully! \u001B[0m")
 					}
 					return nil
 				},

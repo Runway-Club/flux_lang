@@ -7,44 +7,46 @@ import (
 )
 
 func TestVM_VarDeclaration(t *testing.T) {
-	t.Run("create number variables", func(t *testing.T) {
+	t.Run("create invalid number variables", func(t *testing.T) {
 		myVM := vm.NewFluxVirtualMachine()
 		result := myVM.Execute(&shared.ExecutionParams{
 			EntryPoint: "var_declaration_test.flux",
 		})
 
-		if result.Error != "" {
-			t.Errorf("Error: %v", result.Error)
+		if len(result.ErrorCollector.GetErrors()) != 0 {
+			t.Errorf(result.ErrorCollector.GetErrors()[0].MessageFmt, result.ErrorCollector.GetErrors()[0].Args...)
 		}
 
 		if result.ElapsedTime > 1000 {
 			t.Errorf("Execution time too long: %v", result.ElapsedTime)
 		}
-
-		if !myVM.GetVarTable().Exists("a") {
-			t.Errorf("Variable a not found")
+	})
+	t.Run("create valid number variables", func(t *testing.T) {
+		myVM := vm.NewFluxVirtualMachine()
+		result := myVM.Execute(&shared.ExecutionParams{
+			SourceCode: `
+					num a {2}
+					num b {3}
+					num c {2 + 3}
+			`,
+		})
+		if len(result.ErrorCollector.GetErrors()) != 0 {
+			t.Errorf(result.ErrorCollector.GetErrors()[0].MessageFmt, result.ErrorCollector.GetErrors()[0].Args...)
 		}
-
-		if !myVM.GetVarTable().Exists("pi") {
-			t.Errorf("Variable pi not found")
+		if result.RuntimeException != nil {
+			t.Errorf(result.RuntimeException.MessageFmt, result.RuntimeException.Args...)
 		}
-
-		aValue, err := myVM.GetVarTable().GetNumValue("a")
-		if err != nil {
-			t.Errorf("Error getting variable a: %v", err)
+		if result.ElapsedTime > 1000 {
+			t.Errorf("Execution time too long: %v", result.ElapsedTime)
 		}
-
-		if aValue != 2 {
-			t.Errorf("Variable a has wrong value: %v", aValue)
+		if a, err := myVM.GetVarTable().GetNumValue("a"); err != nil || a != 2 {
+			t.Errorf("Expected 2, got %v", a)
 		}
-
-		piValue, err := myVM.GetVarTable().GetNumValue("pi")
-		if err != nil {
-			t.Errorf("Error getting variable pi: %v", err)
+		if b, err := myVM.GetVarTable().GetNumValue("b"); err != nil || b != 3 {
+			t.Errorf("Expected 3, got %v", b)
 		}
-
-		if piValue != 3 {
-			t.Errorf("Variable pi has wrong value: %v", piValue)
+		if c, err := myVM.GetVarTable().GetNumValue("c"); err != nil || c != 5 {
+			t.Errorf("Expected 5, got %v", c)
 		}
 	})
 }
