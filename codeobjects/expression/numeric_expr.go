@@ -12,9 +12,14 @@ type NumericExpression struct {
 	Op        Operator
 	RightExpr *NumericExpression
 	Value     float64
+	GetVar    *GetVar
 }
 
 func (n NumericExpression) Generate(ctx *codeobjects2.GenerateContext) string {
+
+	if n.GetVar != nil {
+		return n.GetVar.Generate(ctx)
+	}
 
 	if n.LeftExpr == nil && n.RightExpr == nil {
 		return fmt.Sprintf("%v", n.Value)
@@ -25,6 +30,11 @@ func (n NumericExpression) Generate(ctx *codeobjects2.GenerateContext) string {
 }
 
 func (n NumericExpression) Execute(ctx *codeobjects2.ExecutionContext) *exception.BaseException {
+
+	if n.GetVar != nil {
+		return n.GetVar.Execute(ctx)
+	}
+
 	if n.LeftExpr == nil && n.RightExpr == nil {
 		ctx.NumericValue = n.Value
 		return nil

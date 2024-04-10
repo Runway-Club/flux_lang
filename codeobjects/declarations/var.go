@@ -55,7 +55,18 @@ func (v VarDeclaration) Execute(ctx *codeobjects2.ExecutionContext) *exception.B
 				return err
 			}
 		}
-		// TODO: Implement string and bool types
+		if v.Type == FluxTypeString {
+			err := ctx.VarTable.SetText(v.Name, exprCtx.TextValue)
+			if err != nil {
+				return err
+			}
+		}
+		if v.Type == FluxTypeBool {
+			err := ctx.VarTable.SetBool(v.Name, exprCtx.BoolValue)
+			if err != nil {
+				return err
+			}
+		}
 	} else if v.RawValue != "" {
 		if v.Type == FluxTypeNumber {
 			value, parseErr := strconv.ParseFloat(v.RawValue, 64)
@@ -73,7 +84,28 @@ func (v VarDeclaration) Execute(ctx *codeobjects2.ExecutionContext) *exception.B
 				return err
 			}
 		}
-		// TODO: Implement string and bool types
+		if v.Type == FluxTypeString {
+			err := ctx.VarTable.SetText(v.Name, v.RawValue)
+			if err != nil {
+				return err
+			}
+		}
+		if v.Type == FluxTypeBool {
+			value, parseErr := strconv.ParseBool(v.RawValue)
+			if parseErr != nil {
+				return &exception.BaseException{
+					MessageFmt: "Invalid boolean value: %s",
+					Args:       []interface{}{v.RawValue},
+					Line:       v.GetLine(),
+					StartPos:   v.GetStartPos(),
+					EndPos:     v.GetEndPos(),
+				}
+			}
+			err := ctx.VarTable.SetBool(v.Name, value)
+			if err != nil {
+				return err
+			}
+		}
 	} else {
 		// Set default value
 		if v.Type == FluxTypeNumber {

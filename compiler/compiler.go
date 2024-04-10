@@ -54,6 +54,12 @@ func (f *FluxCompiler) Compile(params *shared.CompilationParams) shared.Compilat
 
 	program := fluxParser.Parse(mainFileData, errorCollector, logger).GetProgram()
 
+	if len(errorCollector.GetErrors()) != 0 {
+		return shared.CompilationResult{
+			ErrorCollector: errorCollector,
+		}
+	}
+
 	generateCtx := codeobjects.NewGenerateContext(context.TODO())
 
 	destinationCode := program.Generate(generateCtx)

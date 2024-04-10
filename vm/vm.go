@@ -65,6 +65,8 @@ func (f *FluxVirtualMachine) Execute(params *shared.ExecutionParams) shared.Exec
 	executionCtx := codeobjects.NewExecutionContext(context.TODO(), varTable)
 
 	except := program.Execute(executionCtx)
+
+	f.varTable = varTable
 	// return result
 	elapsedTime = time.Now().UnixMilli() - elapsedTime
 

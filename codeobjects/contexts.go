@@ -8,6 +8,8 @@ import (
 type ExecutionContext struct {
 	ctx          context.Context
 	NumericValue float64
+	TextValue    string
+	BoolValue    bool
 	VarTable     *core.VarTable
 }
 
