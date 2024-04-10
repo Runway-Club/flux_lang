@@ -2,18 +2,17 @@ package vm
 
 import (
 	"context"
-	"github.com/Runway-Club/flux_lang/parsing"
+	"github.com/Runway-Club/flux_lang/codeobjects"
+	"github.com/Runway-Club/flux_lang/core"
+	fluxIO "github.com/Runway-Club/flux_lang/io"
+	fluxParser "github.com/Runway-Club/flux_lang/parser"
 	"github.com/Runway-Club/flux_lang/shared"
-	"github.com/Runway-Club/flux_lang/vm/core"
-	"github.com/Runway-Club/flux_lang/vm/io"
-	"github.com/Runway-Club/flux_lang/vm/statements"
-	"github.com/antlr4-go/antlr/v4"
 	"os"
 	"time"
 )
 
 type FluxVirtualMachine struct {
-	parser   *FluxProgramParser
+	parser   *fluxParser.FluxProgramParser
 	varTable *core.VarTable
 }
 
@@ -23,7 +22,7 @@ func NewFluxVirtualMachine() *FluxVirtualMachine {
 
 func (f *FluxVirtualMachine) Execute(params *shared.ExecutionParams) shared.ExecutionResult {
 	// create error collector
-	errorCollector := io.NewBaseErrorCollector()
+	errorCollector := fluxIO.NewBaseErrorCollector()
 
 	elapsedTime := time.Now().UnixMilli()
 	// read file at params.EntryPoint
@@ -53,29 +52,19 @@ func (f *FluxVirtualMachine) Execute(params *shared.ExecutionParams) shared.Exec
 	} else {
 		mainFileData = params.SourceCode
 	}
-	input := antlr.NewInputStream(string(mainFileData))
-	// create lexer
-	lexer := parsing.NewPrimitives(input)
-	// create parser
-	parser := parsing.NewFlux(antlr.NewCommonTokenStream(lexer, 0))
-	// create traverser
 	// create logger
-	var logger io.Logger = io.NewEmptyLogger()
+	var logger fluxIO.Logger = fluxIO.NewEmptyLogger()
 	if params.Verbose {
-		logger = io.NewBaseLogger()
+		logger = fluxIO.NewBaseLogger()
 	}
 
 	varTable := core.NewVarTable()
-	f.varTable = varTable
-	f.parser = NewFluxProgramParser(logger, errorCollector, varTable)
-	// add traverser to parser
-	parser.AddParseListener(f.parser)
-	// start parsing
-	parser.Program()
 
-	executionCtx := statements.NewExecutionContext(context.TODO(), varTable)
+	program := fluxParser.Parse(mainFileData, errorCollector, logger).GetProgram()
 
-	except := f.parser.GetProgram().Execute(executionCtx)
+	executionCtx := codeobjects.NewExecutionContext(context.TODO(), varTable)
+
+	except := program.Execute(executionCtx)
 	// return result
 	elapsedTime = time.Now().UnixMilli() - elapsedTime
 

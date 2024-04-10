@@ -2,7 +2,7 @@ package core
 
 import (
 	"errors"
-	"github.com/Runway-Club/flux_lang/vm/exception"
+	"github.com/Runway-Club/flux_lang/exception"
 )
 
 const (

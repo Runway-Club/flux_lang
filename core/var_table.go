@@ -1,8 +1,8 @@
 package core
 
 import (
-	"github.com/Runway-Club/flux_lang/vm/common"
-	"github.com/Runway-Club/flux_lang/vm/exception"
+	common2 "github.com/Runway-Club/flux_lang/common"
+	"github.com/Runway-Club/flux_lang/exception"
 )
 
 type VarTableEntry struct {
@@ -11,7 +11,7 @@ type VarTableEntry struct {
 	RawValue string
 }
 
-type VarTableGeneric[T any] map[string]common.Identifiable[T]
+type VarTableGeneric[T any] map[string]common2.Identifiable[T]
 
 type VarTable struct {
 	mainTable map[string]*VarTableEntry
@@ -63,7 +63,7 @@ func (vt *VarTable) SetNum(name string, value float64) *exception.BaseException 
 	if err != nil {
 		return err
 	}
-	(*vt.numTable)[name] = common.NewNumber(name, value)
+	(*vt.numTable)[name] = common2.NewNumber(name, value)
 	return nil
 }
 
@@ -81,7 +81,7 @@ func (vt *VarTable) SetText(name string, value string) *exception.BaseException 
 		return err
 
 	}
-	(*vt.strTable)[name] = common.NewText(name, value)
+	(*vt.strTable)[name] = common2.NewText(name, value)
 	return nil
 }
 
@@ -98,7 +98,7 @@ func (vt *VarTable) SetBool(name string, value bool) *exception.BaseException {
 	if err != nil {
 		return err
 	}
-	(*vt.boolTable)[name] = common.NewBoolean(name, value)
+	(*vt.boolTable)[name] = common2.NewBoolean(name, value)
 	return nil
 }
 

@@ -1,13 +1,13 @@
 package operators
 
 import (
-	"github.com/Runway-Club/flux_lang/vm/exception"
-	"github.com/Runway-Club/flux_lang/vm/statements"
-	"github.com/Runway-Club/flux_lang/vm/statements/expression"
+	codeobjects2 "github.com/Runway-Club/flux_lang/codeobjects"
+	"github.com/Runway-Club/flux_lang/codeobjects/expression"
+	"github.com/Runway-Club/flux_lang/exception"
 )
 
 type Add struct {
-	*statements.BaseStatement
+	*codeobjects2.BaseStatement
 	Left  *expression.NumericExpression
 	Right *expression.NumericExpression
 }
@@ -28,7 +28,11 @@ func (a *Add) GetRightExpr() *expression.NumericExpression {
 	return a.Right
 }
 
-func (a *Add) Execute(ctx *statements.ExecutionContext) *exception.BaseException {
+func (a *Add) Generate(ctx *codeobjects2.GenerateContext) string {
+	return a.Left.Generate(ctx) + " + " + a.Right.Generate(ctx)
+}
+
+func (a *Add) Execute(ctx *codeobjects2.ExecutionContext) *exception.BaseException {
 	leftCtx := ctx.Clone()
 	rightCtx := ctx.Clone()
 	if a.Left != nil {
@@ -52,5 +56,5 @@ func (a *Add) Execute(ctx *statements.ExecutionContext) *exception.BaseException
 }
 
 func NewAdd(line int, startPos int, endPos int, left *expression.NumericExpression, right *expression.NumericExpression) *Add {
-	return &Add{BaseStatement: &statements.BaseStatement{Line: line, StartPos: startPos, EndPos: endPos}, Left: left, Right: right}
+	return &Add{BaseStatement: &codeobjects2.BaseStatement{Line: line, StartPos: startPos, EndPos: endPos}, Left: left, Right: right}
 }

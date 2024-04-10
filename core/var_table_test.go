@@ -1,6 +1,8 @@
 package core
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestVarTable_Exists(t *testing.T) {
 	table := NewVarTable()

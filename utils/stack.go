@@ -31,3 +31,23 @@ func (s *Stack[T]) Peek() *T {
 func (s *Stack[T]) IsEmpty() bool {
 	return len(s.elements) == 0
 }
+
+func (s *Stack[T]) Enqueue(element T) {
+	s.elements = append([]T{element}, s.elements...)
+}
+
+func (s *Stack[T]) Dequeue() *T {
+	if s.IsEmpty() {
+		return nil
+	}
+	element := s.elements[0]
+	s.elements = s.elements[1:]
+	return &element
+}
+
+func (s *Stack[T]) Front() *T {
+	if s.IsEmpty() {
+		return nil
+	}
+	return &s.elements[0]
+}

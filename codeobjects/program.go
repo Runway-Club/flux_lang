@@ -1,11 +1,27 @@
-package statements
+package codeobjects
 
-import "github.com/Runway-Club/flux_lang/vm/exception"
+import (
+	"fmt"
+	"github.com/Runway-Club/flux_lang/exception"
+)
 
 type Program struct {
 	*BaseStatement
-	Statements []Statement
+	Statements []CodeObject
 	Libraries  []*Program
+}
+
+func (p Program) Generate(ctx *GenerateContext) string {
+	mainBody := ""
+	for _, statement := range p.Statements {
+		mainBody += statement.Generate(ctx) + "\n"
+	}
+	return fmt.Sprintf(`
+		int main() {
+			%v
+			return 0;
+		}
+	`, mainBody)
 }
 
 func (p Program) Execute(ctx *ExecutionContext) *exception.BaseException {
@@ -32,6 +48,6 @@ func (p Program) GetEndPos() int {
 
 func NewProgram() *Program {
 	return &Program{
-		Statements: make([]Statement, 0),
+		Statements: make([]CodeObject, 0),
 	}
 }

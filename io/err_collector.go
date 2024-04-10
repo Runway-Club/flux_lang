@@ -1,6 +1,8 @@
 package io
 
-import "github.com/Runway-Club/flux_lang/vm/exception"
+import (
+	"github.com/Runway-Club/flux_lang/exception"
+)
 
 type ErrorCollector interface {
 	CollectError(err *exception.BaseException)

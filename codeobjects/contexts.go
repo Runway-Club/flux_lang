@@ -1,8 +1,8 @@
-package statements
+package codeobjects
 
 import (
 	"context"
-	"github.com/Runway-Club/flux_lang/vm/core"
+	"github.com/Runway-Club/flux_lang/core"
 )
 
 type ExecutionContext struct {
@@ -24,5 +24,25 @@ func NewExecutionContext(ctx context.Context, varTable *core.VarTable) *Executio
 		ctx:          ctx,
 		NumericValue: 0,
 		VarTable:     varTable,
+	}
+}
+
+type GenerateContext struct {
+	Ctx     context.Context
+	CodeFmt string
+	Args    []interface{}
+}
+
+func (e GenerateContext) Clone() *GenerateContext {
+	return &GenerateContext{
+		Ctx:     e.Ctx,
+		CodeFmt: e.CodeFmt,
+		Args:    e.Args,
+	}
+}
+
+func NewGenerateContext(ctx context.Context) *GenerateContext {
+	return &GenerateContext{
+		Ctx: ctx,
 	}
 }

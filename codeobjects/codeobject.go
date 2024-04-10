@@ -1,8 +1,11 @@
-package statements
+package codeobjects
 
-import "github.com/Runway-Club/flux_lang/vm/exception"
+import (
+	"github.com/Runway-Club/flux_lang/exception"
+)
 
-type Statement interface {
+type CodeObject interface {
+	Generate(ctx *GenerateContext) string
 	Execute(ctx *ExecutionContext) *exception.BaseException
 	GetLine() int
 	GetStartPos() int
@@ -13,6 +16,10 @@ type BaseStatement struct {
 	Line     int
 	StartPos int
 	EndPos   int
+}
+
+func (b BaseStatement) Generate(ctx *GenerateContext) string {
+	return ""
 }
 
 func (b BaseStatement) Execute(ctx *ExecutionContext) *exception.BaseException {

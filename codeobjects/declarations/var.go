@@ -1,9 +1,10 @@
 package declarations
 
 import (
-	"github.com/Runway-Club/flux_lang/vm/exception"
-	"github.com/Runway-Club/flux_lang/vm/statements"
-	"github.com/Runway-Club/flux_lang/vm/statements/expression"
+	"fmt"
+	codeobjects2 "github.com/Runway-Club/flux_lang/codeobjects"
+	"github.com/Runway-Club/flux_lang/codeobjects/expression"
+	"github.com/Runway-Club/flux_lang/exception"
 	"strconv"
 )
 
@@ -16,14 +17,32 @@ const (
 )
 
 type VarDeclaration struct {
-	*statements.BaseStatement
+	*codeobjects2.BaseStatement
 	Name     string
 	Type     FluxType
 	RawValue string
 	Expr     *expression.MathExpression
 }
 
-func (v VarDeclaration) Execute(ctx *statements.ExecutionContext) *exception.BaseException {
+func (v VarDeclaration) Generate(ctx *codeobjects2.GenerateContext) string {
+	// to golang type
+	varType := "double"
+	if v.Type == FluxTypeString {
+		varType = "string"
+	} else if v.Type == FluxTypeBool {
+		varType = "bool"
+	} else if v.Type == FluxTypeNumber {
+		varType = "double"
+	}
+	if v.Expr != nil {
+		return fmt.Sprintf("%v %v = %v;", varType, v.Name, v.Expr.Generate(ctx))
+	} else if v.RawValue != "" {
+		return fmt.Sprintf("%v %v = %v;", varType, v.Name, v.RawValue)
+	}
+	return fmt.Sprintf("%v %v;", v.Name, varType)
+}
+
+func (v VarDeclaration) Execute(ctx *codeobjects2.ExecutionContext) *exception.BaseException {
 	exprCtx := ctx.Clone()
 	if v.Expr != nil {
 		err := v.Expr.Execute(exprCtx)
@@ -69,5 +88,5 @@ func (v VarDeclaration) Execute(ctx *statements.ExecutionContext) *exception.Bas
 }
 
 func NewVarDeclaration(line int, startPos int, endPos int, name string, type_ FluxType, rawValue string, expr *expression.MathExpression) *VarDeclaration {
-	return &VarDeclaration{BaseStatement: &statements.BaseStatement{Line: line, StartPos: startPos, EndPos: endPos}, Name: name, Type: type_, RawValue: rawValue, Expr: expr}
+	return &VarDeclaration{BaseStatement: &codeobjects2.BaseStatement{Line: line, StartPos: startPos, EndPos: endPos}, Name: name, Type: type_, RawValue: rawValue, Expr: expr}
 }

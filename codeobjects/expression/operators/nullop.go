@@ -1,9 +1,9 @@
 package operators
 
 import (
-	"github.com/Runway-Club/flux_lang/vm/exception"
-	"github.com/Runway-Club/flux_lang/vm/statements"
-	"github.com/Runway-Club/flux_lang/vm/statements/expression"
+	"github.com/Runway-Club/flux_lang/codeobjects"
+	"github.com/Runway-Club/flux_lang/codeobjects/expression"
+	"github.com/Runway-Club/flux_lang/exception"
 )
 
 type NullOperator struct {
@@ -21,7 +21,7 @@ func (n NullOperator) GetRightExpr() *expression.NumericExpression {
 	return nil
 }
 
-func (n NullOperator) Execute(ctx *statements.ExecutionContext) *exception.BaseException {
+func (n NullOperator) Execute(ctx *codeobjects.ExecutionContext) *exception.BaseException {
 	return nil
 }
 

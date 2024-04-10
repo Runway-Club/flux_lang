@@ -1,8 +1,8 @@
 package shared
 
 import (
-	"github.com/Runway-Club/flux_lang/vm/exception"
-	"github.com/Runway-Club/flux_lang/vm/io"
+	"github.com/Runway-Club/flux_lang/exception"
+	"github.com/Runway-Club/flux_lang/io"
 )
 
 type ExecutionParams struct {

@@ -1,8 +1,8 @@
 package expression
 
 import (
-	"github.com/Runway-Club/flux_lang/vm/exception"
-	"github.com/Runway-Club/flux_lang/vm/statements"
+	"github.com/Runway-Club/flux_lang/codeobjects"
+	"github.com/Runway-Club/flux_lang/exception"
 )
 
 type Operator interface {
@@ -10,5 +10,6 @@ type Operator interface {
 	SetRightExpr(rightExpr *NumericExpression)
 	GetLeftExpr() *NumericExpression
 	GetRightExpr() *NumericExpression
-	Execute(ctx *statements.ExecutionContext) *exception.BaseException
+	Generate(ctx *codeobjects.GenerateContext) string
+	Execute(ctx *codeobjects.ExecutionContext) *exception.BaseException
 }

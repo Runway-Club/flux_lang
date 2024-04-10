@@ -1,26 +1,25 @@
-package vm
+package parser
 
 import (
+	fluxCodeObjects "github.com/Runway-Club/flux_lang/codeobjects"
+	"github.com/Runway-Club/flux_lang/codeobjects/declarations"
+	fluxExpr "github.com/Runway-Club/flux_lang/codeobjects/expression"
+	"github.com/Runway-Club/flux_lang/codeobjects/expression/operators"
+	"github.com/Runway-Club/flux_lang/exception"
+	fluxIO "github.com/Runway-Club/flux_lang/io"
 	"github.com/Runway-Club/flux_lang/parsing"
-	"github.com/Runway-Club/flux_lang/vm/core"
-	"github.com/Runway-Club/flux_lang/vm/exception"
-	"github.com/Runway-Club/flux_lang/vm/io"
-	"github.com/Runway-Club/flux_lang/vm/statements"
-	"github.com/Runway-Club/flux_lang/vm/statements/declarations"
-	"github.com/Runway-Club/flux_lang/vm/statements/expression"
-	"github.com/Runway-Club/flux_lang/vm/statements/expression/operators"
-	"github.com/Runway-Club/flux_lang/vm/utils"
+	"github.com/Runway-Club/flux_lang/utils"
 	"github.com/antlr4-go/antlr/v4"
 	"strconv"
 )
 
 type FluxProgramParser struct {
-	logger          io.Logger
-	errorCollector  io.ErrorCollector
-	program         *statements.Program
-	stackStatements *utils.Stack[statements.Statement]
+	logger          fluxIO.Logger
+	errorCollector  fluxIO.ErrorCollector
+	program         *fluxCodeObjects.Program
+	stackStatements *utils.Stack[fluxCodeObjects.CodeObject]
 	resultStack     *utils.Stack[interface{}]
-	executionCtx    *statements.ExecutionContext
+	executionCtx    *fluxCodeObjects.ExecutionContext
 }
 
 func (f FluxProgramParser) EnterArgs(c *parsing.ArgsContext) {
@@ -31,16 +30,16 @@ func (f FluxProgramParser) ExitArgs(c *parsing.ArgsContext) {
 	f.logger.Infof("Exiting args")
 }
 
-func NewFluxProgramParser(logger io.Logger, errorCollector io.ErrorCollector, varOperator core.VarOperator) *FluxProgramParser {
+func NewFluxProgramParser(logger fluxIO.Logger, errorCollector fluxIO.ErrorCollector) *FluxProgramParser {
 	return &FluxProgramParser{
 		logger:          logger,
 		errorCollector:  errorCollector,
-		stackStatements: utils.NewStack[statements.Statement](),
+		stackStatements: utils.NewStack[fluxCodeObjects.CodeObject](),
 		resultStack:     utils.NewStack[interface{}](),
 	}
 }
 
-func (f FluxProgramParser) GetProgram() *statements.Program {
+func (f FluxProgramParser) GetProgram() *fluxCodeObjects.Program {
 	return f.program
 }
 
@@ -62,7 +61,7 @@ func (f FluxProgramParser) ExitEveryRule(ctx antlr.ParserRuleContext) {
 
 func (f FluxProgramParser) EnterProgram(c *parsing.ProgramContext) {
 	f.logger.Infof("Entering program")
-	prog := statements.NewProgram()
+	prog := fluxCodeObjects.NewProgram()
 	f.stackStatements.Push(prog)
 }
 
@@ -160,8 +159,8 @@ func (f FluxProgramParser) EnterOp_level5(c *parsing.Op_level5Context) {
 func (f FluxProgramParser) EnterNumeric_expression(c *parsing.Numeric_expressionContext) {
 	f.logger.Infof("Entering numeric expression")
 
-	numExpr := &expression.NumericExpression{
-		BaseStatement: &statements.BaseStatement{
+	numExpr := &fluxExpr.NumericExpression{
+		BaseStatement: &fluxCodeObjects.BaseStatement{
 			Line:     c.GetStart().GetLine(),
 			StartPos: c.GetStart().GetStart(),
 		},
@@ -185,8 +184,8 @@ func (f FluxProgramParser) EnterComparative_expression(c *parsing.Comparative_ex
 
 func (f FluxProgramParser) EnterMath_expression(c *parsing.Math_expressionContext) {
 	f.logger.Infof("Entering math expression")
-	mathExpr := &expression.MathExpression{
-		BaseStatement: &statements.BaseStatement{
+	mathExpr := &fluxExpr.MathExpression{
+		BaseStatement: &fluxCodeObjects.BaseStatement{
 			Line:     c.GetStart().GetLine(),
 			StartPos: c.GetStart().GetStart(),
 			EndPos:   0,
@@ -215,11 +214,11 @@ func (f FluxProgramParser) EnterFunction_call(c *parsing.Function_callContext) {
 func (f *FluxProgramParser) ExitProgram(c *parsing.ProgramContext) {
 	f.logger.Infof("Exiting program")
 	if f.stackStatements.Peek() != nil {
-		prog := (*f.stackStatements.Pop()).(*statements.Program)
+		prog := (*f.stackStatements.Pop()).(*fluxCodeObjects.Program)
 		f.program = prog
 	}
 	for !f.resultStack.IsEmpty() {
-		statement := (*f.resultStack.Pop()).(statements.Statement)
+		statement := (*f.resultStack.Dequeue()).(fluxCodeObjects.CodeObject)
 		f.program.Statements = append(f.program.Statements, statement)
 	}
 }
@@ -279,8 +278,8 @@ func (f FluxProgramParser) ExitNumber_var_declaration(c *parsing.Number_var_decl
 			numDecStmt := (*f.stackStatements.Pop()).(*declarations.VarDeclaration)
 			if !f.resultStack.IsEmpty() {
 				// check if the top of the stack is a MathExpression
-				if _, ok := (*f.resultStack.Peek()).(*expression.MathExpression); ok != false {
-					numDecStmt.Expr = (*f.resultStack.Pop()).(*expression.MathExpression)
+				if _, ok := (*f.resultStack.Peek()).(*fluxExpr.MathExpression); ok != false {
+					numDecStmt.Expr = (*f.resultStack.Pop()).(*fluxExpr.MathExpression)
 				}
 			}
 
@@ -335,7 +334,7 @@ func (f FluxProgramParser) ExitOp_level5(c *parsing.Op_level5Context) {
 func (f FluxProgramParser) ExitNumeric_expression(c *parsing.Numeric_expressionContext) {
 	f.logger.Infof("Exiting numeric expression")
 	if f.stackStatements.Peek() != nil {
-		numExpr := (*f.stackStatements.Pop()).(*expression.NumericExpression)
+		numExpr := (*f.stackStatements.Pop()).(*fluxExpr.NumericExpression)
 		if c.NUMBER() != nil {
 			value, err := strconv.ParseFloat(c.NUMBER().GetText(), 64)
 			if err != nil {
@@ -347,8 +346,8 @@ func (f FluxProgramParser) ExitNumeric_expression(c *parsing.Numeric_expressionC
 				numExpr.Value = value
 			}
 		} else if len(c.AllNumeric_expression()) == 2 {
-			numExpr.RightExpr = (*f.resultStack.Pop()).(*expression.NumericExpression)
-			numExpr.LeftExpr = (*f.resultStack.Pop()).(*expression.NumericExpression)
+			numExpr.RightExpr = (*f.resultStack.Pop()).(*fluxExpr.NumericExpression)
+			numExpr.LeftExpr = (*f.resultStack.Pop()).(*fluxExpr.NumericExpression)
 
 			if c.Op_level2() != nil {
 				if c.Op_level2().GetText() == "+" {
@@ -372,9 +371,9 @@ func (f FluxProgramParser) ExitMath_expression(c *parsing.Math_expressionContext
 	f.logger.Infof("Exiting math expression")
 	if f.stackStatements.Peek() != nil {
 		if c.Numeric_expression() != nil {
-			if (*f.resultStack.Peek()).(*expression.NumericExpression) != nil {
-				mathExpr := (*f.stackStatements.Pop()).(*expression.MathExpression)
-				mathExpr.NumericExpr = (*f.resultStack.Pop()).(*expression.NumericExpression)
+			if (*f.resultStack.Peek()).(*fluxExpr.NumericExpression) != nil {
+				mathExpr := (*f.stackStatements.Pop()).(*fluxExpr.MathExpression)
+				mathExpr.NumericExpr = (*f.resultStack.Pop()).(*fluxExpr.NumericExpression)
 				f.resultStack.Push(mathExpr)
 			}
 		}
