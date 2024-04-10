@@ -2,15 +2,24 @@ package codeobjects
 
 import (
 	"context"
+	"github.com/Runway-Club/flux_lang/common"
 	"github.com/Runway-Club/flux_lang/core"
 )
 
+type Arg struct {
+	RawValue string
+	Type     common.FluxType
+}
+
 type ExecutionContext struct {
-	ctx          context.Context
-	NumericValue float64
-	TextValue    string
-	BoolValue    bool
-	VarTable     *core.VarTable
+	ctx             context.Context
+	NumericValue    float64
+	TextValue       string
+	BoolValue       bool
+	VarTable        *core.VarTable
+	ReturnValueRaw  string
+	ReturnValueType common.FluxType
+	Args            []*Arg
 }
 
 func (e ExecutionContext) Clone() *ExecutionContext {

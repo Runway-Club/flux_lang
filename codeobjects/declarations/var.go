@@ -4,22 +4,15 @@ import (
 	"fmt"
 	codeobjects2 "github.com/Runway-Club/flux_lang/codeobjects"
 	"github.com/Runway-Club/flux_lang/codeobjects/expression"
+	"github.com/Runway-Club/flux_lang/common"
 	"github.com/Runway-Club/flux_lang/exception"
 	"strconv"
-)
-
-type FluxType string
-
-const (
-	FluxTypeNumber FluxType = "num"
-	FluxTypeString FluxType = "text"
-	FluxTypeBool   FluxType = "bool"
 )
 
 type VarDeclaration struct {
 	*codeobjects2.BaseStatement
 	Name     string
-	Type     FluxType
+	Type     common.FluxType
 	RawValue string
 	Expr     *expression.MathExpression
 }
@@ -27,11 +20,11 @@ type VarDeclaration struct {
 func (v VarDeclaration) Generate(ctx *codeobjects2.GenerateContext) string {
 	// to golang type
 	varType := "double"
-	if v.Type == FluxTypeString {
+	if v.Type == common.FluxTypeString {
 		varType = "string"
-	} else if v.Type == FluxTypeBool {
+	} else if v.Type == common.FluxTypeBool {
 		varType = "bool"
-	} else if v.Type == FluxTypeNumber {
+	} else if v.Type == common.FluxTypeNumber {
 		varType = "double"
 	}
 	if v.Expr != nil {
@@ -49,26 +42,26 @@ func (v VarDeclaration) Execute(ctx *codeobjects2.ExecutionContext) *exception.B
 		if err != nil {
 			return err
 		}
-		if v.Type == FluxTypeNumber {
+		if v.Type == common.FluxTypeNumber {
 			err := ctx.VarTable.SetNum(v.Name, exprCtx.NumericValue)
 			if err != nil {
 				return err
 			}
 		}
-		if v.Type == FluxTypeString {
+		if v.Type == common.FluxTypeString {
 			err := ctx.VarTable.SetText(v.Name, exprCtx.TextValue)
 			if err != nil {
 				return err
 			}
 		}
-		if v.Type == FluxTypeBool {
+		if v.Type == common.FluxTypeBool {
 			err := ctx.VarTable.SetBool(v.Name, exprCtx.BoolValue)
 			if err != nil {
 				return err
 			}
 		}
 	} else if v.RawValue != "" {
-		if v.Type == FluxTypeNumber {
+		if v.Type == common.FluxTypeNumber {
 			value, parseErr := strconv.ParseFloat(v.RawValue, 64)
 			if parseErr != nil {
 				return &exception.BaseException{
@@ -84,13 +77,13 @@ func (v VarDeclaration) Execute(ctx *codeobjects2.ExecutionContext) *exception.B
 				return err
 			}
 		}
-		if v.Type == FluxTypeString {
+		if v.Type == common.FluxTypeString {
 			err := ctx.VarTable.SetText(v.Name, v.RawValue)
 			if err != nil {
 				return err
 			}
 		}
-		if v.Type == FluxTypeBool {
+		if v.Type == common.FluxTypeBool {
 			value, parseErr := strconv.ParseBool(v.RawValue)
 			if parseErr != nil {
 				return &exception.BaseException{
@@ -108,7 +101,7 @@ func (v VarDeclaration) Execute(ctx *codeobjects2.ExecutionContext) *exception.B
 		}
 	} else {
 		// Set default value
-		if v.Type == FluxTypeNumber {
+		if v.Type == common.FluxTypeNumber {
 			err := ctx.VarTable.SetNum(v.Name, 0)
 			if err != nil {
 				return err
@@ -119,6 +112,6 @@ func (v VarDeclaration) Execute(ctx *codeobjects2.ExecutionContext) *exception.B
 	return nil
 }
 
-func NewVarDeclaration(line int, startPos int, endPos int, name string, type_ FluxType, rawValue string, expr *expression.MathExpression) *VarDeclaration {
+func NewVarDeclaration(line int, startPos int, endPos int, name string, type_ common.FluxType, rawValue string, expr *expression.MathExpression) *VarDeclaration {
 	return &VarDeclaration{BaseStatement: &codeobjects2.BaseStatement{Line: line, StartPos: startPos, EndPos: endPos}, Name: name, Type: type_, RawValue: rawValue, Expr: expr}
 }

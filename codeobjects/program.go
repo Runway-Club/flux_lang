@@ -17,11 +17,15 @@ func (p Program) Generate(ctx *GenerateContext) string {
 		mainBody += statement.Generate(ctx) + "\n"
 	}
 	return fmt.Sprintf(`
-		int main() {
-			%v
-			return 0;
-		}
-	`, mainBody)
+#include <iostream>
+#include <string>
+#include <vector>
+
+int main() {
+%v
+return 0;
+}
+`, mainBody)
 }
 
 func (p Program) Execute(ctx *ExecutionContext) *exception.BaseException {

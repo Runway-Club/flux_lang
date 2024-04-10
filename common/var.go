@@ -1,5 +1,14 @@
 package common
 
+type FluxType string
+
+const (
+	FluxTypeNumber FluxType = "num"
+	FluxTypeString FluxType = "text"
+	FluxTypeBool   FluxType = "bool"
+	FluxTypeNone   FluxType = "none"
+)
+
 type Var[T any] struct {
 	name  string
 	value T

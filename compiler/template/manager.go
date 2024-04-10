@@ -19,7 +19,7 @@ func NewTemplateManager(sourceCode string, outputILPath string, outputPath strin
 	mainFile := NewOutputFile(sourceCode, "main.c", outputILPath)
 	shellFile := NewOutputFile(fmt.Sprintf(`
 	#bin/bash
-	gcc -o %s %s/main.c
+	g++ -o %s %s/main.c
 	`, outputPath, outputILPath), "build.sh", outputILPath)
 	return &TemplateManager{
 		mainFile:     mainFile,

@@ -1,0 +1,57 @@
+package functions
+
+import (
+	"fmt"
+	"github.com/Runway-Club/flux_lang/codeobjects"
+	"github.com/Runway-Club/flux_lang/exception"
+	"strings"
+)
+
+type Log struct {
+	*BaseFunction
+	Args *Args
+}
+
+func (l Log) Generate(ctx *codeobjects.GenerateContext) string {
+	coutTxt := ""
+	argsTxt := l.Args.Generate(ctx)
+	for i, arg := range strings.Split(argsTxt, ",") {
+		if i > 0 {
+			coutTxt += " << "
+		}
+		coutTxt += arg
+	}
+	return fmt.Sprintf("std::cout << %v << std::endl;", coutTxt)
+}
+
+func (l Log) Execute(ctx *codeobjects.ExecutionContext) *exception.BaseException {
+	if len(l.Args.Exprs) == 0 {
+		return &exception.BaseException{
+			MessageFmt: "log function requires at least one argument",
+			Line:       l.Line,
+			StartPos:   l.StartPos,
+			EndPos:     l.EndPos,
+		}
+	}
+	if len(l.Args.Exprs) == 1 {
+		// check if the argument is a math expression
+		err := l.Args.Execute(ctx)
+		if err != nil {
+			return err
+		}
+		if len(ctx.Args) == 1 {
+			fmt.Printf(ctx.Args[0].RawValue)
+		}
+	}
+	return nil
+}
+
+func NewLog(args *Args) *Log {
+	return &Log{
+		&BaseFunction{
+			Args:       args,
+			ReturnType: "",
+		},
+		args,
+	}
+}
