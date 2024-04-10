@@ -1,7 +1,7 @@
+
 num a {2}
-num b {4}
+num b {3}
 
-num c {2+3}
+num sum {a + b}
 
-log(b)
-log(2+3)
+log(sum)

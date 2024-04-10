@@ -392,7 +392,7 @@ func (f FluxProgramParser) ExitOp_level5(c *parsing.Op_level5Context) {
 }
 
 func (f FluxProgramParser) ExitNumeric_expression(c *parsing.Numeric_expressionContext) {
-	f.logger.Infof("Exiting numeric expression")
+	//f.logger.Infof("Exiting numeric expression")
 	if f.stackStatements.Peek() != nil {
 		if _, ok := (*f.stackStatements.Peek()).(*fluxExpr.NumericExpression); ok != false {
 			numExpr := (*f.stackStatements.Pop()).(*fluxExpr.NumericExpression)
@@ -406,13 +406,26 @@ func (f FluxProgramParser) ExitNumeric_expression(c *parsing.Numeric_expressionC
 				} else {
 					numExpr.Value = value
 				}
-			} else if len(c.AllNumeric_expression()) == 2 {
-				numExpr.RightExpr = (*f.resultStack.Pop()).(*fluxExpr.NumericExpression)
-				numExpr.LeftExpr = (*f.resultStack.Pop()).(*fluxExpr.NumericExpression)
+			} else if c.Get_var() != nil {
+				if !f.resultStack.IsEmpty() {
+					if _, ok := (*f.resultStack.Peek()).(*fluxExpr.GetVar); ok != false {
+						numExpr.GetVar = (*f.resultStack.Pop()).(*fluxExpr.GetVar)
+					}
+				}
 
-				if c.Op_level2() != nil {
-					if c.Op_level2().GetText() == "+" {
-						numExpr.Op = operators.NewAdd(c.GetStart().GetLine(), c.GetStart().GetStart(), c.GetStop().GetStop(), numExpr.LeftExpr, numExpr.RightExpr)
+			} else if len(c.AllNumeric_expression()) == 2 {
+				if !f.resultStack.IsEmpty() {
+					if _, ok := (*f.resultStack.Peek()).(*fluxExpr.NumericExpression); ok != false {
+						numExpr.RightExpr = (*f.resultStack.Pop()).(*fluxExpr.NumericExpression)
+					}
+					if _, ok := (*f.resultStack.Peek()).(*fluxExpr.NumericExpression); ok != false {
+						numExpr.LeftExpr = (*f.resultStack.Pop()).(*fluxExpr.NumericExpression)
+					}
+
+					if c.Op_level2() != nil {
+						if c.Op_level2().GetText() == "+" {
+							numExpr.Op = operators.NewAdd(c.GetStart().GetLine(), 0, 0, numExpr.LeftExpr, numExpr.RightExpr)
+						}
 					}
 				}
 			}

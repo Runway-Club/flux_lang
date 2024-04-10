@@ -14,7 +14,7 @@ func TestVM_CallFunction(t *testing.T) {
 				num a {2}
 				num b {3}
 				num c {2 + 3}
-				log(2+3+4)
+				log(a+b+c)
 			`,
 		})
 		if len(result.ErrorCollector.GetErrors()) != 0 {
