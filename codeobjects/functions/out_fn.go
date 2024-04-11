@@ -7,12 +7,12 @@ import (
 	"strings"
 )
 
-type Log struct {
+type Out struct {
 	*BaseFunction
 	Args *Args
 }
 
-func (l Log) Generate(ctx *codeobjects.GenerateContext) string {
+func (l Out) Generate(ctx *codeobjects.GenerateContext) string {
 	coutTxt := ""
 	argsTxt := l.Args.Generate(ctx)
 	for i, arg := range strings.Split(argsTxt, ",") {
@@ -24,7 +24,7 @@ func (l Log) Generate(ctx *codeobjects.GenerateContext) string {
 	return fmt.Sprintf("std::cout << %v << std::endl;", coutTxt)
 }
 
-func (l Log) Execute(ctx *codeobjects.ExecutionContext) *exception.BaseException {
+func (l Out) Execute(ctx *codeobjects.ExecutionContext) *exception.BaseException {
 	if len(l.Args.Exprs) == 0 {
 		return &exception.BaseException{
 			MessageFmt: "log function requires at least one argument",
@@ -46,8 +46,8 @@ func (l Log) Execute(ctx *codeobjects.ExecutionContext) *exception.BaseException
 	return nil
 }
 
-func NewLog(args *Args) *Log {
-	return &Log{
+func NewOut(args *Args) *Out {
+	return &Out{
 		&BaseFunction{
 			Args:       args,
 			ReturnType: "",

@@ -17,15 +17,15 @@ func NewFunctionCall(baseStatement *codeobjects.BaseStatement, name string, args
 }
 
 func (f FunctionCall) Generate(ctx *codeobjects.GenerateContext) string {
-	if f.Name == "log" {
-		return NewLog(f.Args).Generate(ctx)
+	if f.Name == "out" {
+		return NewOut(f.Args).Generate(ctx)
 	}
 	return fmt.Sprintf("%v(%v)", f.Name, f.Args.Generate(ctx))
 }
 
 func (f FunctionCall) Execute(ctx *codeobjects.ExecutionContext) *exception.BaseException {
-	if f.Name == "log" {
-		return NewLog(f.Args).Execute(ctx)
+	if f.Name == "out" {
+		return NewOut(f.Args).Execute(ctx)
 	}
 	return nil
 }

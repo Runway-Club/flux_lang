@@ -1,7 +1,2 @@
-
-num a {2}
-num b {3}
-
-num sum {a + b}
-
-log(sum)
+num a {7+3}
+out(1+2)
