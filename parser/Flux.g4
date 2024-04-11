@@ -2,9 +2,8 @@ parser grammar Flux;
 import Variables, Math;
 
 options {
-    tokenVocab = Primitives ;
+  tokenVocab = Primitives;
 }
-
 program: statement* EOF;
 
 statement
@@ -13,15 +12,15 @@ statement
     |   if_statement
     |   func_declaration
     |   return_statement
-    | NEWLINE
+    |   NEWLINE
     ;
 
 expression
-    :   function_call
-    |   var_assignment
+    : function_call
     |   single_var_declaration
+    |   var_assignment
     |   array_var_declaration
-    |   get_var
+    |   get_variable
     ;
 
 block
@@ -38,6 +37,5 @@ data_type
     | BOOLEAN_TYPE
     | COMMON_IDENTIFIER
     ;
-
 
 func_declaration: AT FUNC VAR_IDENTIFIER L_PAREN (VAR_IDENTIFIER (COMMA VAR_IDENTIFIER)*)? R_PAREN (RETURN_TYPE data_type)?  block;
