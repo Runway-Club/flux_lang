@@ -43,6 +43,12 @@ type FluxVisitor interface {
 	// Visit a parse tree produced by Flux#var_value.
 	VisitVar_value(ctx *Var_valueContext) interface{}
 
+	// Visit a parse tree produced by Flux#op_one_expression.
+	VisitOp_one_expression(ctx *Op_one_expressionContext) interface{}
+
+	// Visit a parse tree produced by Flux#op_one_declaration.
+	VisitOp_one_declaration(ctx *Op_one_declarationContext) interface{}
+
 	// Visit a parse tree produced by Flux#string_var_declaration.
 	VisitString_var_declaration(ctx *String_var_declarationContext) interface{}
 
@@ -79,11 +85,17 @@ type FluxVisitor interface {
 	// Visit a parse tree produced by Flux#numeric_expression.
 	VisitNumeric_expression(ctx *Numeric_expressionContext) interface{}
 
+	// Visit a parse tree produced by Flux#text_expression.
+	VisitText_expression(ctx *Text_expressionContext) interface{}
+
 	// Visit a parse tree produced by Flux#logical_expression.
 	VisitLogical_expression(ctx *Logical_expressionContext) interface{}
 
 	// Visit a parse tree produced by Flux#comparative_expression.
 	VisitComparative_expression(ctx *Comparative_expressionContext) interface{}
+
+	// Visit a parse tree produced by Flux#get_var.
+	VisitGet_var(ctx *Get_varContext) interface{}
 
 	// Visit a parse tree produced by Flux#math_expression.
 	VisitMath_expression(ctx *Math_expressionContext) interface{}
@@ -94,12 +106,9 @@ type FluxVisitor interface {
 	// Visit a parse tree produced by Flux#get_child.
 	VisitGet_child(ctx *Get_childContext) interface{}
 
-	// Visit a parse tree produced by Flux#get_var.
-	VisitGet_var(ctx *Get_varContext) interface{}
+	// Visit a parse tree produced by Flux#function_call.
+	VisitFunction_call(ctx *Function_callContext) interface{}
 
 	// Visit a parse tree produced by Flux#args.
 	VisitArgs(ctx *ArgsContext) interface{}
-
-	// Visit a parse tree produced by Flux#function_call.
-	VisitFunction_call(ctx *Function_callContext) interface{}
 }

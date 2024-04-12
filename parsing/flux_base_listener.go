@@ -92,6 +92,18 @@ func (s *BaseFluxListener) EnterVar_value(ctx *Var_valueContext) {}
 // ExitVar_value is called when production var_value is exited.
 func (s *BaseFluxListener) ExitVar_value(ctx *Var_valueContext) {}
 
+// EnterOp_one_expression is called when production op_one_expression is entered.
+func (s *BaseFluxListener) EnterOp_one_expression(ctx *Op_one_expressionContext) {}
+
+// ExitOp_one_expression is called when production op_one_expression is exited.
+func (s *BaseFluxListener) ExitOp_one_expression(ctx *Op_one_expressionContext) {}
+
+// EnterOp_one_declaration is called when production op_one_declaration is entered.
+func (s *BaseFluxListener) EnterOp_one_declaration(ctx *Op_one_declarationContext) {}
+
+// ExitOp_one_declaration is called when production op_one_declaration is exited.
+func (s *BaseFluxListener) ExitOp_one_declaration(ctx *Op_one_declarationContext) {}
+
 // EnterString_var_declaration is called when production string_var_declaration is entered.
 func (s *BaseFluxListener) EnterString_var_declaration(ctx *String_var_declarationContext) {}
 
@@ -164,6 +176,12 @@ func (s *BaseFluxListener) EnterNumeric_expression(ctx *Numeric_expressionContex
 // ExitNumeric_expression is called when production numeric_expression is exited.
 func (s *BaseFluxListener) ExitNumeric_expression(ctx *Numeric_expressionContext) {}
 
+// EnterText_expression is called when production text_expression is entered.
+func (s *BaseFluxListener) EnterText_expression(ctx *Text_expressionContext) {}
+
+// ExitText_expression is called when production text_expression is exited.
+func (s *BaseFluxListener) ExitText_expression(ctx *Text_expressionContext) {}
+
 // EnterLogical_expression is called when production logical_expression is entered.
 func (s *BaseFluxListener) EnterLogical_expression(ctx *Logical_expressionContext) {}
 
@@ -175,6 +193,12 @@ func (s *BaseFluxListener) EnterComparative_expression(ctx *Comparative_expressi
 
 // ExitComparative_expression is called when production comparative_expression is exited.
 func (s *BaseFluxListener) ExitComparative_expression(ctx *Comparative_expressionContext) {}
+
+// EnterGet_var is called when production get_var is entered.
+func (s *BaseFluxListener) EnterGet_var(ctx *Get_varContext) {}
+
+// ExitGet_var is called when production get_var is exited.
+func (s *BaseFluxListener) ExitGet_var(ctx *Get_varContext) {}
 
 // EnterMath_expression is called when production math_expression is entered.
 func (s *BaseFluxListener) EnterMath_expression(ctx *Math_expressionContext) {}
@@ -194,20 +218,14 @@ func (s *BaseFluxListener) EnterGet_child(ctx *Get_childContext) {}
 // ExitGet_child is called when production get_child is exited.
 func (s *BaseFluxListener) ExitGet_child(ctx *Get_childContext) {}
 
-// EnterGet_var is called when production get_var is entered.
-func (s *BaseFluxListener) EnterGet_var(ctx *Get_varContext) {}
+// EnterFunction_call is called when production function_call is entered.
+func (s *BaseFluxListener) EnterFunction_call(ctx *Function_callContext) {}
 
-// ExitGet_var is called when production get_var is exited.
-func (s *BaseFluxListener) ExitGet_var(ctx *Get_varContext) {}
+// ExitFunction_call is called when production function_call is exited.
+func (s *BaseFluxListener) ExitFunction_call(ctx *Function_callContext) {}
 
 // EnterArgs is called when production args is entered.
 func (s *BaseFluxListener) EnterArgs(ctx *ArgsContext) {}
 
 // ExitArgs is called when production args is exited.
 func (s *BaseFluxListener) ExitArgs(ctx *ArgsContext) {}
-
-// EnterFunction_call is called when production function_call is entered.
-func (s *BaseFluxListener) EnterFunction_call(ctx *Function_callContext) {}
-
-// ExitFunction_call is called when production function_call is exited.
-func (s *BaseFluxListener) ExitFunction_call(ctx *Function_callContext) {}

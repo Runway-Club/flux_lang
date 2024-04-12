@@ -46,6 +46,12 @@ public interface MathVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitNumeric_expression(Math.Numeric_expressionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Math#text_expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitText_expression(Math.Text_expressionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Math#logical_expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -57,6 +63,12 @@ public interface MathVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitComparative_expression(Math.Comparative_expressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Math#get_var}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGet_var(Math.Get_varContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Math#math_expression}.
 	 * @param ctx the parse tree
@@ -76,21 +88,15 @@ public interface MathVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGet_child(Math.Get_childContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link Math#get_var}.
+	 * Visit a parse tree produced by {@link Math#function_call}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGet_var(Math.Get_varContext ctx);
+	T visitFunction_call(Math.Function_callContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Math#args}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitArgs(Math.ArgsContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link Math#function_call}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunction_call(Math.Function_callContext ctx);
 }

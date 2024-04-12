@@ -1,29 +1,29 @@
 parser grammar Math;
+
 options {
   tokenVocab = Primitives;
 }
+
 op_level1: OP_MULTIPLY|OP_DIVIDE|OP_MOD|OP_POWER;
 op_level2: OP_PLUS|OP_MINUS;
 op_level3: OP_AND|OP_OR|OP_XOR;
 op_level4: OP_EQUAL|OP_NOT_EQUAL|OP_LESS|OP_LESS_EQUAL|OP_GREATER|OP_GREATER_EQUAL;
 op_level5: OP_NOT;
 
-
-
-numberic_expression
-    :L_PAREN numberic_expression R_PAREN
-    | numberic_expression op_level1 numberic_expression
-    | numberic_expression op_level2 numberic_expression
+numeric_expression
+    :L_PAREN numeric_expression R_PAREN
+    | numeric_expression op_level1 numeric_expression
+    | numeric_expression op_level2 numeric_expression
     | NUMBER
-    | get_variable
+    | get_var
     | function_call
-    | OP_MINUS numberic_expression
-  ;
+    | OP_MINUS numeric_expression
+    ;
 
 text_expression
     : text_expression OP_PLUS text_expression
     | TEXT
-    | get_variable
+    | get_var
     | function_call
     ;
 
@@ -33,18 +33,18 @@ logical_expression
     |   logical_expression op_level4 logical_expression
     |   OP_NOT logical_expression
     |   BOOLEAN
-    |   get_variable
+    |   get_var
     |   function_call
     ;
 
   comparative_expression
-    : numberic_expression op_level4 numberic_expression
+    : numeric_expression op_level4 numeric_expression
     | logical_expression op_level3 logical_expression
     | comparative_expression op_level3 logical_expression
     | op_level5 L_PAREN comparative_expression R_PAREN
     ;
 
-  get_variable
+  get_var
     : VAR_IDENTIFIER
     | get_array_element
     | get_child
@@ -52,14 +52,14 @@ logical_expression
 
 
   math_expression
-    : get_variable
-    | numberic_expression
+    : get_var
+    | numeric_expression
     | logical_expression
     | text_expression
     ;
 
   get_array_element
-    : VAR_IDENTIFIER L_SQUARE numberic_expression R_SQUARE
+    : VAR_IDENTIFIER L_SQUARE numeric_expression R_SQUARE
     ;
 
   get_child
@@ -72,9 +72,13 @@ logical_expression
     ;
 
 
-   function_call
-    : VAR_IDENTIFIER L_PAREN get_variable R_PAREN
-    | VAR_IDENTIFIER L_PAREN (get_variable (COMMA get_variable)*)? R_PAREN
-    |VAR_IDENTIFIER L_PAREN (math_expression(COMMA math_expression)*)? R_PAREN
+    function_call
+    :   VAR_IDENTIFIER L_PAREN args? R_PAREN
+    ;
+
+   args
+    : VAR_IDENTIFIER L_PAREN get_var R_PAREN
+    | VAR_IDENTIFIER L_PAREN (get_var (COMMA get_var)*)? R_PAREN
+    | VAR_IDENTIFIER L_PAREN (math_expression(COMMA math_expression)*)? R_PAREN
     ;
 

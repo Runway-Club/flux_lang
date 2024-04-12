@@ -42,7 +42,7 @@ op_one_declaration
 
 string_var_declaration
     : TEXT_TYPE var_name L_BLOCK NEWLINE* TEXT NEWLINE* R_BLOCK
-    | TEXT_TYPE var_name L_BLOCK NEWLINE* get_variable NEWLINE* R_BLOCK
+    | TEXT_TYPE var_name L_BLOCK NEWLINE* get_var NEWLINE* R_BLOCK
     | TEXT_TYPE var_name L_BLOCK NEWLINE* text_expression NEWLINE* R_BLOCK
     ;
 
@@ -71,6 +71,6 @@ array_var_declaration
     ;
 
 var_assignment
-    : var_name L_BLOCK NEWLINE* get_variable  NEWLINE* R_BLOCK
+    : var_name L_BLOCK NEWLINE* get_var  NEWLINE* R_BLOCK
     | var_name L_BLOCK NEWLINE* math_expression  NEWLINE* R_BLOCK
     ;

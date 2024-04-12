@@ -43,6 +43,12 @@ type FluxListener interface {
 	// EnterVar_value is called when entering the var_value production.
 	EnterVar_value(c *Var_valueContext)
 
+	// EnterOp_one_expression is called when entering the op_one_expression production.
+	EnterOp_one_expression(c *Op_one_expressionContext)
+
+	// EnterOp_one_declaration is called when entering the op_one_declaration production.
+	EnterOp_one_declaration(c *Op_one_declarationContext)
+
 	// EnterString_var_declaration is called when entering the string_var_declaration production.
 	EnterString_var_declaration(c *String_var_declarationContext)
 
@@ -79,11 +85,17 @@ type FluxListener interface {
 	// EnterNumeric_expression is called when entering the numeric_expression production.
 	EnterNumeric_expression(c *Numeric_expressionContext)
 
+	// EnterText_expression is called when entering the text_expression production.
+	EnterText_expression(c *Text_expressionContext)
+
 	// EnterLogical_expression is called when entering the logical_expression production.
 	EnterLogical_expression(c *Logical_expressionContext)
 
 	// EnterComparative_expression is called when entering the comparative_expression production.
 	EnterComparative_expression(c *Comparative_expressionContext)
+
+	// EnterGet_var is called when entering the get_var production.
+	EnterGet_var(c *Get_varContext)
 
 	// EnterMath_expression is called when entering the math_expression production.
 	EnterMath_expression(c *Math_expressionContext)
@@ -94,14 +106,11 @@ type FluxListener interface {
 	// EnterGet_child is called when entering the get_child production.
 	EnterGet_child(c *Get_childContext)
 
-	// EnterGet_var is called when entering the get_var production.
-	EnterGet_var(c *Get_varContext)
+	// EnterFunction_call is called when entering the function_call production.
+	EnterFunction_call(c *Function_callContext)
 
 	// EnterArgs is called when entering the args production.
 	EnterArgs(c *ArgsContext)
-
-	// EnterFunction_call is called when entering the function_call production.
-	EnterFunction_call(c *Function_callContext)
 
 	// ExitProgram is called when exiting the program production.
 	ExitProgram(c *ProgramContext)
@@ -139,6 +148,12 @@ type FluxListener interface {
 	// ExitVar_value is called when exiting the var_value production.
 	ExitVar_value(c *Var_valueContext)
 
+	// ExitOp_one_expression is called when exiting the op_one_expression production.
+	ExitOp_one_expression(c *Op_one_expressionContext)
+
+	// ExitOp_one_declaration is called when exiting the op_one_declaration production.
+	ExitOp_one_declaration(c *Op_one_declarationContext)
+
 	// ExitString_var_declaration is called when exiting the string_var_declaration production.
 	ExitString_var_declaration(c *String_var_declarationContext)
 
@@ -175,11 +190,17 @@ type FluxListener interface {
 	// ExitNumeric_expression is called when exiting the numeric_expression production.
 	ExitNumeric_expression(c *Numeric_expressionContext)
 
+	// ExitText_expression is called when exiting the text_expression production.
+	ExitText_expression(c *Text_expressionContext)
+
 	// ExitLogical_expression is called when exiting the logical_expression production.
 	ExitLogical_expression(c *Logical_expressionContext)
 
 	// ExitComparative_expression is called when exiting the comparative_expression production.
 	ExitComparative_expression(c *Comparative_expressionContext)
+
+	// ExitGet_var is called when exiting the get_var production.
+	ExitGet_var(c *Get_varContext)
 
 	// ExitMath_expression is called when exiting the math_expression production.
 	ExitMath_expression(c *Math_expressionContext)
@@ -190,12 +211,9 @@ type FluxListener interface {
 	// ExitGet_child is called when exiting the get_child production.
 	ExitGet_child(c *Get_childContext)
 
-	// ExitGet_var is called when exiting the get_var production.
-	ExitGet_var(c *Get_varContext)
+	// ExitFunction_call is called when exiting the function_call production.
+	ExitFunction_call(c *Function_callContext)
 
 	// ExitArgs is called when exiting the args production.
 	ExitArgs(c *ArgsContext)
-
-	// ExitFunction_call is called when exiting the function_call production.
-	ExitFunction_call(c *Function_callContext)
 }

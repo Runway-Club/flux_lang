@@ -20,7 +20,7 @@ expression
     |   single_var_declaration
     |   var_assignment
     |   array_var_declaration
-    |   get_variable
+    |   get_var
     ;
 
 block

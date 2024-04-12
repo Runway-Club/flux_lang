@@ -55,6 +55,14 @@ func (v *BaseFluxVisitor) VisitVar_value(ctx *Var_valueContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseFluxVisitor) VisitOp_one_expression(ctx *Op_one_expressionContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseFluxVisitor) VisitOp_one_declaration(ctx *Op_one_declarationContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseFluxVisitor) VisitString_var_declaration(ctx *String_var_declarationContext) interface{} {
 	return v.VisitChildren(ctx)
 }
@@ -103,11 +111,19 @@ func (v *BaseFluxVisitor) VisitNumeric_expression(ctx *Numeric_expressionContext
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseFluxVisitor) VisitText_expression(ctx *Text_expressionContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseFluxVisitor) VisitLogical_expression(ctx *Logical_expressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
 func (v *BaseFluxVisitor) VisitComparative_expression(ctx *Comparative_expressionContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseFluxVisitor) VisitGet_var(ctx *Get_varContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
@@ -123,14 +139,10 @@ func (v *BaseFluxVisitor) VisitGet_child(ctx *Get_childContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseFluxVisitor) VisitGet_var(ctx *Get_varContext) interface{} {
+func (v *BaseFluxVisitor) VisitFunction_call(ctx *Function_callContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
 func (v *BaseFluxVisitor) VisitArgs(ctx *ArgsContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *BaseFluxVisitor) VisitFunction_call(ctx *Function_callContext) interface{} {
 	return v.VisitChildren(ctx)
 }

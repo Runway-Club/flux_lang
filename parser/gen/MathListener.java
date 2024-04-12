@@ -67,6 +67,16 @@ public interface MathListener extends ParseTreeListener {
 	 */
 	void exitNumeric_expression(Math.Numeric_expressionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Math#text_expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterText_expression(Math.Text_expressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Math#text_expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitText_expression(Math.Text_expressionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Math#logical_expression}.
 	 * @param ctx the parse tree
 	 */
@@ -86,6 +96,16 @@ public interface MathListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitComparative_expression(Math.Comparative_expressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Math#get_var}.
+	 * @param ctx the parse tree
+	 */
+	void enterGet_var(Math.Get_varContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Math#get_var}.
+	 * @param ctx the parse tree
+	 */
+	void exitGet_var(Math.Get_varContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Math#math_expression}.
 	 * @param ctx the parse tree
@@ -117,16 +137,6 @@ public interface MathListener extends ParseTreeListener {
 	 */
 	void exitGet_child(Math.Get_childContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Math#get_var}.
-	 * @param ctx the parse tree
-	 */
-	void enterGet_var(Math.Get_varContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Math#get_var}.
-	 * @param ctx the parse tree
-	 */
-	void exitGet_var(Math.Get_varContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link Math#function_call}.
 	 * @param ctx the parse tree
 	 */
@@ -136,4 +146,14 @@ public interface MathListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunction_call(Math.Function_callContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Math#args}.
+	 * @param ctx the parse tree
+	 */
+	void enterArgs(Math.ArgsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Math#args}.
+	 * @param ctx the parse tree
+	 */
+	void exitArgs(Math.ArgsContext ctx);
 }
