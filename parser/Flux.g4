@@ -26,8 +26,13 @@ expression
 block
     :   L_BLOCK statement* R_BLOCK;
 
-loop_statement: AT LOOP comparative_expression block;
-if_statement: AT IF comparative_expression block (AT ELSE block)?;
+loop_statement: AT LOOP loop block;
+if_statement: AT IF logical_expression block (AT ELSE block)?;
+
+loop
+    :   get_var (SEMICOLON NEWLINE* var_name op_level4 math_expression(SEMICOLON NEWLINE* var_assignment)) NEWLINE*
+    |   NUMBER_TYPE var_name L_BLOCK NEWLINE* numeric_expression NEWLINE* R_BLOCK (SEMICOLON NEWLINE* var_name op_level4 math_expression(SEMICOLON NEWLINE* var_assignment)) NEWLINE*
+    ;
 
 return_statement: AT RETURN expression;
 

@@ -29,19 +29,13 @@ text_expression
 
 logical_expression
     :   L_PAREN logical_expression R_PAREN
+    |   numeric_expression op_level4 numeric_expression
     |   logical_expression op_level3 logical_expression
     |   logical_expression op_level4 logical_expression
     |   OP_NOT logical_expression
     |   BOOLEAN
     |   get_var
     |   function_call
-    ;
-
-  comparative_expression
-    : numeric_expression op_level4 numeric_expression
-    | logical_expression op_level3 logical_expression
-    | comparative_expression op_level3 logical_expression
-    | op_level5 L_PAREN comparative_expression R_PAREN
     ;
 
   get_var
@@ -73,7 +67,8 @@ logical_expression
 
 
     function_call
-    :   VAR_IDENTIFIER L_PAREN args? R_PAREN
+    : VAR_IDENTIFIER L_PAREN args? R_PAREN
+    | args
     ;
 
    args
