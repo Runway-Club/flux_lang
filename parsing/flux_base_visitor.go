@@ -31,6 +31,10 @@ func (v *BaseFluxVisitor) VisitIf_statement(ctx *If_statementContext) interface{
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseFluxVisitor) VisitLoop(ctx *LoopContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseFluxVisitor) VisitReturn_statement(ctx *Return_statementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
@@ -116,10 +120,6 @@ func (v *BaseFluxVisitor) VisitText_expression(ctx *Text_expressionContext) inte
 }
 
 func (v *BaseFluxVisitor) VisitLogical_expression(ctx *Logical_expressionContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *BaseFluxVisitor) VisitComparative_expression(ctx *Comparative_expressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

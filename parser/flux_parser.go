@@ -25,6 +25,46 @@ type FluxProgramParser struct {
 	executionCtx    *fluxCodeObjects.ExecutionContext
 }
 
+func (f FluxProgramParser) EnterLoop(c *parsing.LoopContext) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (f FluxProgramParser) EnterOp_one_expression(c *parsing.Op_one_expressionContext) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (f FluxProgramParser) EnterOp_one_declaration(c *parsing.Op_one_declarationContext) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (f FluxProgramParser) EnterText_expression(c *parsing.Text_expressionContext) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (f FluxProgramParser) ExitLoop(c *parsing.LoopContext) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (f FluxProgramParser) ExitOp_one_expression(c *parsing.Op_one_expressionContext) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (f FluxProgramParser) ExitOp_one_declaration(c *parsing.Op_one_declarationContext) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (f FluxProgramParser) ExitText_expression(c *parsing.Text_expressionContext) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func NewFluxProgramParser(logger fluxIO.Logger, errorCollector fluxIO.ErrorCollector) *FluxProgramParser {
 	return &FluxProgramParser{
 		logger:          logger,
@@ -206,10 +246,6 @@ func (f FluxProgramParser) EnterNumeric_expression(c *parsing.Numeric_expression
 
 func (f FluxProgramParser) EnterLogical_expression(c *parsing.Logical_expressionContext) {
 	f.logger.Infof("Entering logical expression")
-}
-
-func (f FluxProgramParser) EnterComparative_expression(c *parsing.Comparative_expressionContext) {
-	f.logger.Infof("Entering comparative expression")
 }
 
 func (f FluxProgramParser) EnterMath_expression(c *parsing.Math_expressionContext) {
@@ -436,10 +472,6 @@ func (f FluxProgramParser) ExitNumeric_expression(c *parsing.Numeric_expressionC
 
 func (f FluxProgramParser) ExitLogical_expression(c *parsing.Logical_expressionContext) {
 	f.logger.Infof("Exiting logical expression")
-}
-
-func (f FluxProgramParser) ExitComparative_expression(c *parsing.Comparative_expressionContext) {
-	f.logger.Infof("Exiting comparative expression")
 }
 
 func (f FluxProgramParser) ExitMath_expression(c *parsing.Math_expressionContext) {

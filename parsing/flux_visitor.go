@@ -25,6 +25,9 @@ type FluxVisitor interface {
 	// Visit a parse tree produced by Flux#if_statement.
 	VisitIf_statement(ctx *If_statementContext) interface{}
 
+	// Visit a parse tree produced by Flux#loop.
+	VisitLoop(ctx *LoopContext) interface{}
+
 	// Visit a parse tree produced by Flux#return_statement.
 	VisitReturn_statement(ctx *Return_statementContext) interface{}
 
@@ -90,9 +93,6 @@ type FluxVisitor interface {
 
 	// Visit a parse tree produced by Flux#logical_expression.
 	VisitLogical_expression(ctx *Logical_expressionContext) interface{}
-
-	// Visit a parse tree produced by Flux#comparative_expression.
-	VisitComparative_expression(ctx *Comparative_expressionContext) interface{}
 
 	// Visit a parse tree produced by Flux#get_var.
 	VisitGet_var(ctx *Get_varContext) interface{}

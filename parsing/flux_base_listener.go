@@ -56,6 +56,12 @@ func (s *BaseFluxListener) EnterIf_statement(ctx *If_statementContext) {}
 // ExitIf_statement is called when production if_statement is exited.
 func (s *BaseFluxListener) ExitIf_statement(ctx *If_statementContext) {}
 
+// EnterLoop is called when production loop is entered.
+func (s *BaseFluxListener) EnterLoop(ctx *LoopContext) {}
+
+// ExitLoop is called when production loop is exited.
+func (s *BaseFluxListener) ExitLoop(ctx *LoopContext) {}
+
 // EnterReturn_statement is called when production return_statement is entered.
 func (s *BaseFluxListener) EnterReturn_statement(ctx *Return_statementContext) {}
 
@@ -187,12 +193,6 @@ func (s *BaseFluxListener) EnterLogical_expression(ctx *Logical_expressionContex
 
 // ExitLogical_expression is called when production logical_expression is exited.
 func (s *BaseFluxListener) ExitLogical_expression(ctx *Logical_expressionContext) {}
-
-// EnterComparative_expression is called when production comparative_expression is entered.
-func (s *BaseFluxListener) EnterComparative_expression(ctx *Comparative_expressionContext) {}
-
-// ExitComparative_expression is called when production comparative_expression is exited.
-func (s *BaseFluxListener) ExitComparative_expression(ctx *Comparative_expressionContext) {}
 
 // EnterGet_var is called when production get_var is entered.
 func (s *BaseFluxListener) EnterGet_var(ctx *Get_varContext) {}

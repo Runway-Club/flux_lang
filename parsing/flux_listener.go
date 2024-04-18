@@ -25,6 +25,9 @@ type FluxListener interface {
 	// EnterIf_statement is called when entering the if_statement production.
 	EnterIf_statement(c *If_statementContext)
 
+	// EnterLoop is called when entering the loop production.
+	EnterLoop(c *LoopContext)
+
 	// EnterReturn_statement is called when entering the return_statement production.
 	EnterReturn_statement(c *Return_statementContext)
 
@@ -91,9 +94,6 @@ type FluxListener interface {
 	// EnterLogical_expression is called when entering the logical_expression production.
 	EnterLogical_expression(c *Logical_expressionContext)
 
-	// EnterComparative_expression is called when entering the comparative_expression production.
-	EnterComparative_expression(c *Comparative_expressionContext)
-
 	// EnterGet_var is called when entering the get_var production.
 	EnterGet_var(c *Get_varContext)
 
@@ -129,6 +129,9 @@ type FluxListener interface {
 
 	// ExitIf_statement is called when exiting the if_statement production.
 	ExitIf_statement(c *If_statementContext)
+
+	// ExitLoop is called when exiting the loop production.
+	ExitLoop(c *LoopContext)
 
 	// ExitReturn_statement is called when exiting the return_statement production.
 	ExitReturn_statement(c *Return_statementContext)
@@ -195,9 +198,6 @@ type FluxListener interface {
 
 	// ExitLogical_expression is called when exiting the logical_expression production.
 	ExitLogical_expression(c *Logical_expressionContext)
-
-	// ExitComparative_expression is called when exiting the comparative_expression production.
-	ExitComparative_expression(c *Comparative_expressionContext)
 
 	// ExitGet_var is called when exiting the get_var production.
 	ExitGet_var(c *Get_varContext)
